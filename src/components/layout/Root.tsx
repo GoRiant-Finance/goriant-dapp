@@ -5,7 +5,7 @@ interface RootProps {
   className?: string
 }
 
-const Root: React.SFC<RootProps> = ({ children }) => <Wrapper>{children}</Wrapper>
+const Root: React.FC<RootProps> = ({ children }) => <Wrapper>{children}</Wrapper>
 
 export default Root
 

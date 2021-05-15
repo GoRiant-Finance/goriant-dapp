@@ -19,7 +19,7 @@ import globals from './styles/globals'
 // The given `pages/` directory provides an example of a directory structure that's easily
 // code-splittable.
 
-const Routes: React.SFC = () => (
+const Routes: React.FC = () => (
   <Root>
     <Global styles={normalize} />
     <Global styles={globals} />

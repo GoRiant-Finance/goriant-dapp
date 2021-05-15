@@ -6,7 +6,8 @@ import Main from './main'
 import * as serviceWorker from './serviceWorker'
 import configureStore from './configureStore'
 
-import 'typeface-ibm-plex-sans'
+import 'typeface-inter'
+
 
 // We use hash history because this example is going to be hosted statically.
 // Normally you would use browser history.
