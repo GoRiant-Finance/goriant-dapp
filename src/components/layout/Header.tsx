@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from '../../utils/styled'
-import LayoutContainer from '../../containers/LayoutContainer'
 import Container from './Container'
 
 interface HeaderProps {
@@ -30,80 +29,97 @@ const HeaderLeft = styled('div')`
   padding-right: 1rem;
 `
 
+const Logo = styled('img')`
+  width: 25%;
+  height: auto;
+  margin-top: auto;
+  margin-bottom: -10px;
+`
+
 const HeaderNav = styled('nav')`
   flex: 1 1 auto;
-  margin: 1rem 0;
+
+  margin-top: -5px;
+
+  margin-right: 10px;
 
   @media (min-width: ${props => props.theme.breakpoints.lg}) {
-    margin: 0;
+
   }
 `
 
 const HeaderNavLink = styled(NavLink)`
-  margin: 0 1rem;
+  margin: 0 4rem;
+
+  font-size: 22px;
+
+  font-weight: 600;
 
   &.is-active {
-    text-decoration: underline;
+    color: #FFCC00; 
+    text-shadow: 0px 1px 5px rgb(255 204 0 / 50%);
   }
 `
 
-const HeaderRight = styled('div')`
-  padding-left: 1rem;
-`
-
-const Title = styled('h2')`
+const Title = styled('div')`
   margin: 0;
-  font-weight: 500;
+  font-weight: 700;
+  font-size: 30px;
+  display: inline;
 `
 
-const CurrentTheme = styled('span')`
-  margin-right: 1rem;
-`
-
-const ThemeSwitcherButton = styled('button')`
+const Balance = styled('div')`
+  border: 1px solid #FCCC75;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 40px;
+  padding-left: 20px;
+  border-radius: 1.5em;
+  position: relative;
   display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid ${props => props.theme.colors.white};
-  border-radius: 3px;
-  background-color: ${props => props.theme.colors.white};
-  color: ${props => props.theme.colors.brand};
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  vertical-align: middle;
+  color: #06C270;
+  font-weight: 700;
+  font-size: 22px;
+`
+const BalanceImg = styled('img')`
+  margin-top: 5px;
+`
 
-  &:hover,
-  &:focus {
-    background-color: transparent;
-    color: ${props => props.theme.colors.white};
-  }
+const UserId = styled('div')`
+  position: relative;
+  display: inline-block;
+  margin: 4%;
+  vertical-align: middle;
+  box-shadow: 60px 24px 40px rgba(0, 0, 0, 0.4); 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 80px;
+  font-size: 12px;
 `
 
 const Header: React.FC<HeaderProps> = ({ title }) => (
   <Wrapper>
     <HeaderInner>
       <HeaderLeft>
+        <Logo src="img/Yellow.png" alt="goriant logo"/>
         <Title>{title}</Title>
       </HeaderLeft>
       <HeaderNav>
         <HeaderNavLink exact to="/" activeClassName="is-active">
-          Pool
+          POOL
         </HeaderNavLink>
         <HeaderNavLink to="/heroes" activeClassName="is-active">
-          Voting
+          VOTING
         </HeaderNavLink>
       </HeaderNav>
-      <HeaderRight>
-        <LayoutContainer>
-          {({ theme, setTheme }) => (
-            <>
-              <CurrentTheme>Current theme: {theme}</CurrentTheme>
-              <ThemeSwitcherButton onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>Switch theme</ThemeSwitcherButton>
-            </>
-          )}
-        </LayoutContainer>
-      </HeaderRight>
+    <Balance>
+        <BalanceImg src="img/Coin.png"/>
+        <span>$323.31</span>
+      </Balance>
+      <UserId>
+      <img src="img/Core Icon.png"/><span>USERID: 03TGD5DGDAHAIA</span>
+      </UserId>
     </HeaderInner>
   </Wrapper>
 )
