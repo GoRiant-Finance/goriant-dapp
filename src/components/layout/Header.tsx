@@ -2,7 +2,7 @@ import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from '../../utils/styled'
 import Container from './Container'
-import {ConnectStatus} from '../ConnectStatus'
+import {ConnectStatus} from '../connectStatus'
 
 interface HeaderProps {
   title: string
@@ -46,7 +46,7 @@ const HeaderNavLink = styled(NavLink)`
   font-weight: 600;
 
   &.is-active {
-    color: #FFCC00; 
+    color: #FFCC00;
     text-shadow: 0px 1px 5px rgb(255 204 0 / 50%);
   }
 `
@@ -92,7 +92,7 @@ const UserId = styled('div')`
   position: relative;
   display: inline-block;
   vertical-align: middle;
-  box-shadow: 60px 24px 40px rgba(0, 0, 0, 0.4); 
+  box-shadow: 60px 24px 40px rgba(0, 0, 0, 0.4);
   padding-right: 80px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -116,14 +116,14 @@ const Logo = () => (
               <filter id="filter0_d" x="0.331543" y="40.2507" width="89.2786" height="63.4986" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
-                <feOffset/> 
+                <feOffset/>
                 <feGaussianBlur stdDeviation="8"/>
                 <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.8 0 0 0 0 0 0 0 0 0.4 0"/>
                 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
                 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
               </filter>
               <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(69.4999 11.9999) rotate(133.603) scale(28.9994 59.7155)">
-                <stop stop-color="#FFDB00"/>  
+                <stop stop-color="#FFDB00"/>
                 <stop offset="1" stop-color="#FFB800"/>
               </radialGradient>
               <clipPath id="clip0">
@@ -157,10 +157,10 @@ const Header: React.FC<HeaderProps> = ({ title }) => (
       <Logo />
       <Title>{title}</Title>
       <HeaderNav>
-        <HeaderNavLink exact to="/" activeClassName="is-active">
+        <HeaderNavLink exact to="/pool" activeClassName="is-active">
           POOL
         </HeaderNavLink>
-        <HeaderNavLink to="/heroes" activeClassName="is-active">
+        <HeaderNavLink to="/voting" activeClassName="is-active">
           VOTING
         </HeaderNavLink>
       </HeaderNav>

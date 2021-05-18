@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
 import { Global } from '@emotion/core'
-import { WalletProvider } from "./contexts/wallet";
-import { ConnectionProvider } from "./contexts/connection";
-import { AccountsProvider } from "./contexts/accounts";
-import { MarketProvider } from "./contexts/market";
-
+import { WalletProvider } from './contexts/wallet'
+import { ConnectionProvider } from './contexts/connection'
+import { AccountsProvider } from './contexts/accounts'
+import { MarketProvider } from './contexts/market'
+import PoolPage from './pages/pool'
 import Root from './components/layout/Root'
 import Header from './components/layout/Header'
 import normalize from './styles/normalize'
@@ -24,20 +24,23 @@ const Routes: React.FC = () => (
   <Root>
     <Global styles={normalize} />
     <Global styles={globals} />
-    <HashRouter basename={"/"}>
-        <ConnectionProvider>
-          <WalletProvider>
-              <AccountsProvider>
-                <MarketProvider>
-                <Header title="GORIANT" />
-                    <Switch>
-                      <Route component={() => <div>Not Found</div>} />
-                    </Switch>  
-                  </MarketProvider>
-              </AccountsProvider>
-          </WalletProvider>
-        </ConnectionProvider>
-      </HashRouter>
+    <HashRouter basename={'/'}>
+      <ConnectionProvider>
+        <WalletProvider>
+          <AccountsProvider>
+            <MarketProvider>
+              <Header title="GORIANT" />
+              <Switch>
+                <Route exact path="/">
+                  <Redirect to="/pool" />
+                </Route>
+                <Route path="/pool" component={PoolPage} />
+              </Switch>
+            </MarketProvider>
+          </AccountsProvider>
+        </WalletProvider>
+      </ConnectionProvider>
+    </HashRouter>
   </Root>
 )
 
