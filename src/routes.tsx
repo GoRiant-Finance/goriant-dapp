@@ -1,12 +1,13 @@
 import * as React from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { HashRouter, Route, Switch } from "react-router-dom";
 import { Global } from '@emotion/core'
+import { WalletProvider } from "./contexts/wallet";
+import { ConnectionProvider } from "./contexts/connection";
+import { AccountsProvider } from "./contexts/accounts";
+import { MarketProvider } from "./contexts/market";
 
 import Root from './components/layout/Root'
 import Header from './components/layout/Header'
-import IndexPage from './pages/index'
-import HeroesPage from './pages/heroes'
-import TeamsPage from './pages/teams'
 import normalize from './styles/normalize'
 import globals from './styles/globals'
 
@@ -23,13 +24,20 @@ const Routes: React.FC = () => (
   <Root>
     <Global styles={normalize} />
     <Global styles={globals} />
-    <Header title="GORIANT" />
-    <Switch>
-      <Route exact path="/" component={IndexPage} />
-      <Route path="/heroes" component={HeroesPage} />
-      <Route path="/teams" component={TeamsPage} />
-      <Route component={() => <div>Not Found</div>} />
-    </Switch>
+    <HashRouter basename={"/"}>
+        <ConnectionProvider>
+          <WalletProvider>
+              <AccountsProvider>
+                <MarketProvider>
+                <Header title="GORIANT" />
+                    <Switch>
+                      <Route component={() => <div>Not Found</div>} />
+                    </Switch>  
+                  </MarketProvider>
+              </AccountsProvider>
+          </WalletProvider>
+        </ConnectionProvider>
+      </HashRouter>
   </Root>
 )
 
