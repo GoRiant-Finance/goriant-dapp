@@ -1,6 +1,6 @@
 # GORIANT
 
-> Project using React, Redux v4, and TypeScript.
+> Project using Solana Web3js, Serum Sollet Wallet Adapter, React, Redux v4, and TypeScript.
 
 ## Getting started
 
