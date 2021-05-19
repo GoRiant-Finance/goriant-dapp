@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
+    "@craco/craco": "^5.7.0",
     "@emotion/core": "^10.0.16",
     "@emotion/styled": "^10.0.15",
     "@ledgerhq/hw-transport-webusb": "^5.41.0",
@@ -41,11 +42,11 @@
     "typesafe-actions": "^4.4.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "craco start",
+    "build": "craco build",
     "now-build": "npm run build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "test": "react-scripts test",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "browserslist": {
