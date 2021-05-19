@@ -154,8 +154,10 @@ export function WalletProvider({ children = null as any }) {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const select = useCallback(() => setIsModalVisible(true), []);
+  const select = useCallback(() => {console.log("test select") ;setIsModalVisible(true); console.log(isModalVisible)}, []);
   const close = useCallback(() => setIsModalVisible(false), []);
+
+  console.log(select)
 
   return (
     <WalletContext.Provider
@@ -221,7 +223,7 @@ export function useWallet() {
     select,
     publicKey: wallet?.publicKey,
     connect() {
-      console.log(wallet);
+      console.log(select());
       wallet ? wallet.connect() : select();
     },
     disconnect() {

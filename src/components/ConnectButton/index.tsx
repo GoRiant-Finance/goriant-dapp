@@ -12,16 +12,15 @@ export interface ConnectButtonProps
 export const ConnectButton = (props: ConnectButtonProps) => {
   // should use SOL ◎ ?
 
-  const { connect, connected } = useWallet();
+  const { connect, select, connected } = useWallet();
   const { onClick, children, disabled, allowWalletChange, ...rest } = props;
 
   return (
-      <Button 
-      {...rest}
-      onClick={connected?onClick:connect} disabled={connected && disabled} style={{ backgroundColor: "#06C270", color: "white", display: "inline-block", 
+      <div 
+      onClick={select} style={{ backgroundColor: "#06C270", color: "white", display: "inline-block", 
       borderRadius: "2em", paddingTop: "10px", paddingBottom: "10px", paddingRight: "20px", 
       paddingLeft: "20px", cursor: "pointer", fontWeight: 500}}>
           ConnectWallet
-      </Button>
+      </div>
   );
 };
