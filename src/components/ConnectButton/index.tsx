@@ -16,9 +16,9 @@ export const ConnectButton = (props: ConnectButtonProps) => {
   const { onClick, children, disabled, allowWalletChange, ...rest } = props;
 
   return (
-      <div 
-      onClick={select} style={{ backgroundColor: "#06C270", color: "white", display: "inline-block", 
-      borderRadius: "2em", paddingTop: "10px", paddingBottom: "10px", paddingRight: "20px", 
+      <div
+      onClick={select} style={{ backgroundColor: "#06C270", color: "white", display: "inline-block",
+      borderRadius: "2em", paddingTop: "10px", paddingBottom: "10px", paddingRight: "20px",
       paddingLeft: "20px", cursor: "pointer", fontWeight: 500}}>
           ConnectWallet
       </div>
