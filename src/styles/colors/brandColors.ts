@@ -1,6 +1,7 @@
 const brandColors = {
   primary: '#1C1C28',
   black: '#000000',
+  dark1: '#28293D',
   gray75: '#2e2e2c',
   gray60: '#666666',
   gray50: '#7f7f7f',
