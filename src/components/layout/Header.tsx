@@ -2,7 +2,7 @@ import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from '../../utils/styled'
 import Container from './Container'
-import {ConnectStatus} from '../ConnectStatus'
+import {ConnectStatus} from '../connectStatus'
 import './../../ant-custom.less'
 
 interface HeaderProps {
