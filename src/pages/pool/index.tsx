@@ -94,6 +94,7 @@ function PoolPage() {
               <Row gutter={50}>
                 <Col span={24}>
                   <Card bordered={false} style={{ background: dark1, borderRadius: 16, marginBottom: 20 }}>
+                    <CardTitle>Hello RIANT</CardTitle>
                     <CardTitle>Total Value Locked</CardTitle>
                     <CardNumber>$1,232,323,323.00</CardNumber>
                   </Card>
