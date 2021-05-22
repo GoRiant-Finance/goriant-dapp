@@ -24,6 +24,7 @@
     "craco-less": "^1.17.0",
     "emotion-theming": "^10.0.14",
     "eventemitter3": "^4.0.7",
+    "firebase-tools": "^9.11.0",
     "history": "^4.9.0",
     "jazzicon": "^1.5.0",
     "moment": "^2.22.2",
@@ -44,6 +45,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "deploy": "yarn build && firebase deploy --only hosting",
     "now-build": "npm run build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "craco test",
