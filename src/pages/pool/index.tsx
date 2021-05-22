@@ -4,7 +4,10 @@ import { Space, Card } from 'antd'
 import Page from '../../components/layout/Page'
 import Container from '../../components/layout/Container'
 import styled from '../../utils/styled'
+import "./../../core.less"
+import "./../../pool.less"
 import { Row, Col } from 'antd'
+import { relative } from 'path'
 
 const style = { background: '#0092ff', padding: '8px 0' }
 const dark1 = '#28293D'
@@ -33,18 +36,31 @@ function PoolPage() {
             </Col>
 
             <Col xs={24} sm={14}>
-              <Card bordered={false} style={{ background: dark1, borderRadius: 16, height: '100%' }}>
+              <Card className="farmsPanel" bordered={false} style={{ background: dark1, borderRadius: 16, height: '100%'}}>
                 <CardTitle>Farms & Staking</CardTitle>
-                <Row gutter={16}>
-                  <Col span={16}>
-                    <CardDashed>
-                      <p>Card content</p>
+                <Row gutter={16} style={{verticalAlign: 'text-bottom', position: 'relative'}}>
+                  <Col span={14}>
+                    <CardDashed className="farmsContainer">
+                      <div className="harvest">
+                        <div className="info">
+                          <h1>GORIANT to Harvest</h1>
+                          <span className="goriant text-yellow-1">0.126</span>
+                          <span className="text-red">-$5.18%</span>
+                        </div>
+                      </div>
+                      <div className="wallet">
+                        <div className="info">
+                          <h1>GORIANT to Wallet</h1>
+                          <span className="goriant text-yellow-1">2.126</span>
+                          <span className="text-green">+2.18%</span>
+                         </div>
+                      </div>
                     </CardDashed>
                   </Col>
-                  <Col span={6}>
-                    <CardDashed>
-                      <p>Card content</p>
-                    </CardDashed>
+                  <Col span={8}>
+                    <div className="button">
+                        Harvest all (2)
+                    </div>
                   </Col>
                 </Row>{' '}
               </Card>{' '}
@@ -123,6 +139,6 @@ const CardNumber = styled('p')`
   text-shadow: 4px 0px 40px  #57EBA1;
 `
 const CardDashed = styled('div')`
-  border: 1px dashed #cecfd9;
+  border: 2px dashed  RGBA(206,207,217,0.5);
   border-radius: 16px;
 `

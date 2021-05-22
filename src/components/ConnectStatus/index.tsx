@@ -1,7 +1,7 @@
 import React from "react";
 import { useWallet } from "../../contexts/wallet";
-import { CurrentUserBadge } from "../currentUserBadge";
-import { ConnectButton } from "../connectButton";
+import { CurrentUserBadge } from "../CurrentUserBadge";
+import { ConnectButton } from "../ConnectButton";
 
 export const ConnectStatus = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const {  connected } = useWallet();
