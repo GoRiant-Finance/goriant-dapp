@@ -7,7 +7,6 @@ import styled from '../../utils/styled'
 import "./../../core.less"
 import "./../../pool.less"
 import { Row, Col } from 'antd'
-import { relative } from 'path'
 
 const style = { background: '#0092ff', padding: '8px 0' }
 const dark1 = '#28293D'
