@@ -54,6 +54,36 @@ const Ray: React.FC = () => (
 </svg>
 )
 
+const Info: React.FC = () => (
+  <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M3.52942 11.43C3.52942 15.33 6.51419 18.4917 10.1961 18.4917C13.878 18.4917 16.8628 15.33 16.8628 11.43C16.8628 7.52987 13.878 4.36823 10.1961 4.36823C6.51419 4.36823 3.52942 7.52987 3.52942 11.43ZM4.36278 11.4299C4.36278 14.8425 6.97445 17.609 10.1961 17.609C13.4178 17.609 16.0294 14.8425 16.0294 11.4299C16.0294 8.01736 13.4178 5.25093 10.1961 5.25093C6.97445 5.25093 4.36278 8.01736 4.36278 11.4299ZM9.03639 15.0832V15.8436H12.0157V15.0832L11.0872 14.9143V9.31456H9.03639V10.0809L9.96494 10.2499V14.9143L9.03639 15.0832ZM11.0872 6.43018V7.64305H9.96496V6.43018H11.0872Z" fill="#FAFAFC"/>
+  </svg>
+)
+
+const AutoIcon: React.FC = () => (
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.7945 4.42328L12.1248 0.941465C12.1058 0.843352 12.0342 0.763347 11.9385 0.734156C11.8431 0.704425 11.7388 0.730643 11.6682 0.801457L10.4493 2.02072C8.09642 -0.131839 4.43162 -0.0691326 2.155 2.20748C1.07494 3.28754 0.451394 4.72303 0.40031 6.2496C0.395174 6.3988 0.511938 6.52394 0.661405 6.52881C0.664379 6.52881 0.667352 6.52881 0.670595 6.52881C0.815468 6.52881 0.935475 6.41367 0.94034 6.26771C0.98737 4.87872 1.55443 3.57243 2.53719 2.58967C4.66758 0.459816 8.13237 0.460357 10.2622 2.58967C10.3636 2.69102 10.543 2.69102 10.6444 2.58967L11.6899 1.54393L12.1883 4.13354L9.59867 3.6354L9.95112 3.28295C10.0568 3.17727 10.0568 3.00645 9.95112 2.90077C9.84544 2.79508 9.67462 2.79508 9.56894 2.90077L8.85619 3.61351C8.78538 3.68432 8.7597 3.78811 8.78889 3.88379C8.81808 3.97948 8.89782 4.0511 8.99647 4.06975L12.4783 4.73952C12.5661 4.75628 12.6569 4.72871 12.7205 4.66519C12.7834 4.60194 12.8116 4.51113 12.7945 4.42328Z" fill="url(#paint0_radial)"/>
+<path d="M12.1377 6.37527C12.1348 6.375 12.1318 6.375 12.1285 6.375C11.9837 6.375 11.8637 6.49014 11.8588 6.6361C11.812 8.02509 11.245 9.33111 10.2622 10.3141C8.1321 12.444 4.66731 12.4435 2.53719 10.3141C2.43584 10.2128 2.25637 10.2128 2.15501 10.3141L1.10954 11.3599L0.611138 8.77027L3.20074 9.26841L2.84829 9.62059C2.74261 9.726 2.74261 9.89709 2.84829 10.0028C2.95397 10.1085 3.12479 10.1085 3.23047 10.0028L3.94322 9.2903C4.01403 9.21949 4.03971 9.1157 4.01052 9.02002C3.98133 8.92433 3.90159 8.85271 3.80294 8.83406L0.321392 8.16429C0.233278 8.14726 0.142733 8.17537 0.0792156 8.23862C0.0159688 8.30187 -0.0121409 8.39268 0.00488711 8.4808L0.674655 11.9626C0.693575 12.0607 0.7652 12.1407 0.860882 12.1699C0.956292 12.1994 1.06035 12.1732 1.13117 12.1026L2.35015 10.8834C3.49319 11.9291 4.94652 12.4518 6.3993 12.4518C7.93669 12.4518 9.4738 11.8667 10.6441 10.6963C11.7245 9.61599 12.3477 8.18051 12.3986 6.65421C12.404 6.50528 12.2872 6.38014 12.1377 6.37527Z" fill="url(#paint1_radial)"/>
+<defs>
+<radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(11.3963 1.41863) rotate(156.038) scale(4.28479 6.55686)">
+<stop stop-color="#FFDB00"/>
+<stop offset="1" stop-color="#FFB800"/>
+</radialGradient>
+<radialGradient id="paint1_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.9957 7.34176) rotate(156.038) scale(4.28462 6.55669)">
+<stop stop-color="#FFDB00"/>
+<stop offset="1" stop-color="#FFB800"/>
+</radialGradient>
+</defs>
+</svg>
+)
+
+const ArrowLeftIcon: React.FC = () => (
+  <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.66667 5.42596L2.66667 7.01485H10H2.66667L4.66667 8.60375" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.66671 9.66302V11.2519H13.3334V2.77783H6.66671V4.36672" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+)
+
 function PoolPage() {
   return (
     <Page>
@@ -141,8 +171,19 @@ function PoolPage() {
                   </Col>
                 </Row>
                 <Row className="feature-container">
-                  <Col span={5}>
-                    Test
+                  <Col className="contract-info" span={5}>
+                    <div className="set-pair-info">
+                      <ArrowLeftIcon /> Set Pair Info
+                    </div>
+                    <div className="view-contract">
+                      <ArrowLeftIcon />View Contract
+                    </div>
+                    <Row className="auto">
+                      <div className="button">
+                        <AutoIcon/> <span className="text">AUTO</span>
+                      </div>
+                      <Info />
+                    </Row>
                   </Col>
                   <Col className="staked-container" span={4}>
                     <div className="text">STAKED</div>
@@ -154,15 +195,31 @@ function PoolPage() {
                       <span className="dash">|</span>
                       <span className="text text-gradient-4">DEPOSIT</span>
                     </div>
-                    <div>
-                      <Col span={5}>
-                        Test
+                    <Row className="stake-amount">
+                      <Col span={18} className="number-container">
+                        <Row>
+                          <Col className="number" span={17}>
+                            0
+                          </Col>
+                          <Col className="text" span={3}>
+                            <span>RIANT</span>
+                          </Col>
+                          <Col className="max-button" span={3}>
+                            <div className="button">
+                              MAX
+                            </div>
+                          </Col>
+                        </Row>
                       </Col>
-                      <Col span={2}>
-                        Test
+                      <Col className="deposit-button-container" span={6}>
+                        <div className="deposit-button">
+                          Deposit
+                        </div>
                       </Col>
+                    </Row>
+                    <div className="wallet-balance">
+                      WALLET BALANCE: 0.000 RIANT
                     </div>
-                    <div></div>
                   </Col>
                 </Row>
               </Card>{' '}
@@ -175,7 +232,7 @@ function PoolPage() {
                   borderRadius: 16
                 }}
               >
-                <Row className="ray">
+                <Row className="compounding-info ray">
                   <Col span={2} className="logo-container">
                     <Ray /><span className="">RAY</span>
                   </Col>
@@ -194,6 +251,58 @@ function PoolPage() {
                   <Col className="detail-button" span={2}>
                     <div>
                       Detail v
+                    </div>
+                  </Col>
+                </Row>
+                <Row className="feature-container">
+                <Col className="contract-info" span={5}>
+                    <div className="set-pair-info">
+                      <ArrowLeftIcon /> Set Pair Info
+                    </div>
+                    <div className="view-contract">
+                      <ArrowLeftIcon />View Contract
+                    </div>
+                    <Row className="auto">
+                      <div className="button">
+                        <AutoIcon/> <span className="text">AUTO</span>
+                      </div>
+                      <Info />
+                    </Row>
+                  </Col>
+                  <Col className="staked-container" span={4}>
+                    <div className="text">STAKED</div>
+                    <div className="number">20.195</div>
+                  </Col>
+                  <Col className="withdraw-deposit-container" span={11}>
+                    <div>
+                      <span className="text">WITHRAW</span>
+                      <span className="dash">|</span>
+                      <span className="text text-gradient-4">DEPOSIT</span>
+                    </div>
+                    <Row className="stake-amount">
+                      <Col span={18} className="number-container">
+                        <Row>
+                          <Col className="number" span={17}>
+                            0
+                          </Col>
+                          <Col className="text" span={3}>
+                            <span>RAY</span>
+                          </Col>
+                          <Col className="max-button" span={3}>
+                            <div className="button">
+                              MAX
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col className="deposit-button-container" span={6}>
+                        <div className="deposit-button">
+                          Deposit
+                        </div>
+                      </Col>
+                    </Row>
+                    <div className="wallet-balance">
+                      WALLET BALANCE: 0.000 RAY
                     </div>
                   </Col>
                 </Row>
