@@ -3,6 +3,13 @@
 #IDE
 .idea
 
+### Firebase ###
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
 # dependencies
 /node_modules
 
