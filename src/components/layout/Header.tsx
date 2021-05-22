@@ -42,7 +42,7 @@ const HeaderNav = styled('nav')`
 const HeaderNavLink = styled(NavLink)`
   margin: 0 4rem;
 
-  font-size: 22px;
+  font-size: 20px;
 
   font-weight: 600;
 
@@ -53,8 +53,8 @@ const HeaderNavLink = styled(NavLink)`
 `
 
 const Title = styled('div')`
-  font-weight: 700;
-  font-size: 30px;
+  font-weight: 600;
+  font-size: 28px;
   vertical-align: middle;
   line-height: normal;
   display: inline-block;
@@ -64,8 +64,8 @@ const Title = styled('div')`
 const Balance = styled('div')`
   margin-right: 40px;
   border: 1px solid #FCCC75;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   padding-right: 40px;
   padding-left: 20px;
   border-radius: 1.5em;
@@ -74,7 +74,7 @@ const Balance = styled('div')`
   vertical-align: middle;
   color: #06C270;
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
 `
 const BalanceNum = styled('span')`
   display: inline-block;
@@ -102,7 +102,7 @@ const UserId = styled('div')`
 `
 
 const Logo = () => (
-  <svg width="90" height="104" viewBox="0 0 90 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="80" height="104" viewBox="0 0 90 104" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g filter="url(#filter0_d)">
               <path d="M43.8216 56.4767C44.3961 56.1776 45.0797 56.1753 45.6562 56.4703L72.5213 70.2196C73.973 70.9626 73.973 73.0374 72.5213 73.7804L45.6562 87.5297C45.0797 87.8247 44.3961 87.8224 43.8216 87.5233L17.4081 73.774C15.9727 73.0269 15.9727 70.9731 17.4081 70.226L43.8216 56.4767Z" fill="black" fill-opacity="0.01"/>
             </g>
