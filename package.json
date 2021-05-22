@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "CI=false craco build",
     "deploy": "yarn build && firebase deploy --only hosting",
     "now-build": "npm run build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
