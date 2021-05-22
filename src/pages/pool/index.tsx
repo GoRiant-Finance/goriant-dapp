@@ -19,14 +19,14 @@ function PoolPage() {
               <Row gutter={50}>
                 <Col span={24}>
                   <Card bordered={false} style={{ background: dark1, borderRadius: 16, marginBottom: 20 }}>
-                    <p>Card content</p>
-                    <p>Card content</p>
+                    <CardTitle>Total Value Locked</CardTitle>
+                    <CardNumber>$1,232,323,323.00</CardNumber>
                   </Card>
                 </Col>
                 <Col span={24}>
                   <Card bordered={false} style={{ background: dark1, borderRadius: 16 }}>
-                    <p>Card content</p>
-                    <p>Card content</p>
+                    <CardTitle>Total User Earned</CardTitle>
+                    <CardNumber>32,323,323.00</CardNumber>
                   </Card>{' '}
                 </Col>
               </Row>{' '}
@@ -34,9 +34,19 @@ function PoolPage() {
 
             <Col xs={24} sm={14}>
               <Card bordered={false} style={{ background: dark1, borderRadius: 16, height: '100%' }}>
-                <p>Card content</p>
-                <p>Card content</p>
-                <p>Card content</p>
+                <CardTitle>Farms & Staking</CardTitle>
+                <Row gutter={16}>
+                  <Col span={16}>
+                    <CardDashed>
+                      <p>Card content</p>
+                    </CardDashed>
+                  </Col>
+                  <Col span={6}>
+                    <CardDashed>
+                      <p>Card content</p>
+                    </CardDashed>
+                  </Col>
+                </Row>{' '}
               </Card>{' '}
             </Col>
           </Row>
@@ -47,18 +57,18 @@ function PoolPage() {
                 style={{
                   border: '2px solid transparent',
                   background: 'linear-gradient(#28293D,#28293D) padding-box, linear-gradient(to right, #00CFDE, #05A660) border-box',
-                  borderRadius: 16,
+                  borderRadius: 16
                 }}
               >
                 <p>Card content</p>
               </Card>{' '}
             </Col>
             <Col span={24}>
-            <Card
+              <Card
                 style={{
                   border: '2px solid transparent',
                   background: 'linear-gradient(#28293D,#28293D) padding-box, linear-gradient(to right, #00CFDE, #05A660) border-box',
-                  borderRadius: 16,
+                  borderRadius: 16
                 }}
               >
                 <p>Card content</p>
@@ -87,7 +97,32 @@ const PageContent = styled('article')`
   h3,
   h4 {
     margin-bottom: 0.5rem;
-    font-family: ${props => props.theme.fonts.headings};
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+      Helvetica Neue, Arial, sans-serif;
     line-height: 1.25;
   }
+`
+
+const CardTitle = styled('p')`
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 17px;
+  /* identical to box height */
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fafafc;
+`
+const CardNumber = styled('p')`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 28px;
+  padding-top: 12px;
+  line-height: 44px;
+  /* or 137% */
+  color: #06c270;
+  text-shadow: 4px 0px 40px  #57EBA1;
+`
+const CardDashed = styled('div')`
+  border: 1px dashed #cecfd9;
+  border-radius: 16px;
 `
