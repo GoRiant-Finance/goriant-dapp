@@ -10,7 +10,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { History } from 'history'
 
 // Import the state interface and our combined reducers/sagas.
-import { ApplicationState, createRootReducer } from './store'
+import { ApplicationState, createRootReducer, rootSaga } from './store'
 
 export default function configureStore(history: History, initialState: ApplicationState): Store<ApplicationState> {
   // create the composing function for our middlewares
@@ -24,6 +24,8 @@ export default function configureStore(history: History, initialState: Applicati
     createRootReducer(history),
     composeEnhancers(applyMiddleware(routerMiddleware(history), sagaMiddleware))
   )
+
+  sagaMiddleware.run(rootSaga)
 
   return store
 }

@@ -3,7 +3,10 @@ import { PoolState, PoolActionTypes } from './types'
 
 // Type-safe initialState!
 export const initialState: PoolState = {
-  data: [],
+  data: {
+    lockedNum: 321,
+    userEarnedNum: 31
+  },
   errors: undefined,
   loading: false
 }
@@ -29,4 +32,4 @@ const reducer: Reducer<PoolState> = (state = initialState, action) => {
 
 // Instead of using default export, we use named exports. That way we can group these exports
 // inside the `index.js` folder.
-export { reducer as heroesReducer }
+export { reducer as poolReducer }
