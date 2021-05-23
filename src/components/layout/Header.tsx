@@ -94,11 +94,12 @@ const UserId = styled('div')`
   display: inline-block;
   vertical-align: middle;
   box-shadow: 60px 24px 40px rgba(0, 0, 0, 0.4);
-  padding-right: 80px;
+  padding-right: 40px;
   padding-top: 10px;
   padding-bottom: 10px;
   font-size: 12px;
-  margin-left: 10px;
+  margin-left: 5px;
+  margin-right: 20px
 `
 
 const Logo = () => (
@@ -172,7 +173,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => (
         <BalanceNum>$323.31</BalanceNum>
       </Balance>
       <CoreIcon />
-      <UserId>
+      <UserId style={{paddingRight: 30}}>
         <ConnectStatus />
       </UserId>
     </HeaderInner>
