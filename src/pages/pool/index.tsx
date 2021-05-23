@@ -26,16 +26,47 @@ interface PropsFromState {
 interface PropsFromDispatch {
   //fetchRequest: typeof fetchRequest
 }
+interface State {
+  riantPick?: string
+  coinTypes: string[]
+}
 
 // Combine both state + dispatch props - as well as any props we want to pass - in a union type.
 type AllProps = PropsFromState & PropsFromDispatch
 
-class PoolPage extends React.Component<AllProps> {
+class PoolPage extends React.Component<AllProps, State> {
+  constructor(props: AllProps) {
+    super(props)
+    this.state = {
+      coinTypes: ['WITHRAW', 'DEPOSIT'],
+      riantPick: 'DEPOSIT'
+    }
+  }
+
   public componentDidMount() {
     // const { fetchRequest: fr } = this.props
     // fr()
   }
   render() {
+    const yourPick = this.state.riantPick
+    const options = this.state.coinTypes.map((loan, key) => {
+      const isCurrent = this.state.riantPick === loan
+      return (
+        <span key={key} className="radioPad">
+            <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
+              <input
+                className="text"
+                type="radio"
+                name="coffeeTypes"
+                id={loan}
+                value={loan}
+                onChange={this.handleRadio}
+              />
+              {loan}
+            </label>
+        </span>
+      )
+    })
     return (
       <Page>
         <Container>
@@ -45,14 +76,14 @@ class PoolPage extends React.Component<AllProps> {
                 <Row gutter={50}>
                   <Col span={24}>
                     <Card bordered={false} style={{ background: dark1, borderRadius: 16, marginBottom: 20 }}>
-                      <CardTitle>Anh Em mình là 1 Gia Đình</CardTitle>
+                      <CardTitle>Total Value Locked</CardTitle>
                       <CardNumber>$1,232,323,323.00</CardNumber>
                     </Card>
                   </Col>
                   <Col span={24}>
                     <Card bordered={false} style={{ background: dark1, borderRadius: 16 }}>
                       <CardTitle>Total User Earned</CardTitle>
-                      <CardNumber>32,323,323.00</CardNumber>
+                      <CardNumber>$32,323,323.00</CardNumber>
                     </Card>{' '}
                   </Col>
                 </Row>{' '}
@@ -140,9 +171,8 @@ class PoolPage extends React.Component<AllProps> {
                     </Col>
                     <Col className="withdraw-deposit-container" span={11}>
                       <div>
-                        <span className="text">WITHRAW</span>
-                        <span className="dash">|</span>
-                        <span className="text text-gradient-4">DEPOSIT</span>
+                      {options}
+
                       </div>
                       <Row className="stake-amount">
                         <Col span={18} className="number-container">
@@ -159,7 +189,7 @@ class PoolPage extends React.Component<AllProps> {
                           </Row>
                         </Col>
                         <Col className="deposit-button-container" span={6}>
-                          <div className="deposit-button">Deposit</div>
+                          <div className="deposit-button">{yourPick}</div>
                         </Col>
                       </Row>
                       <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
@@ -251,28 +281,26 @@ class PoolPage extends React.Component<AllProps> {
       </Page>
     )
   }
+  handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({riantPick: e.target.value})
+  }
 }
 
-  const mapStateToProps = ({ pool }: ApplicationState) => ({
-    loading: pool.loading,
-    errors: pool.errors,
-    data: pool.data
-  })
+const mapStateToProps = ({ pool }: ApplicationState) => ({
+  loading: pool.loading,
+  errors: pool.errors,
+  data: pool.data
+})
 
-  // mapDispatchToProps is especially useful for constraining our actions to the connected component.
-  // You can access these via `this.props`.
-  const mapDispatchToProps = {
-    //fetchRequest
-  }
+// mapDispatchToProps is especially useful for constraining our actions to the connected component.
+// You can access these via `this.props`.
+const mapDispatchToProps = {
+  //fetchRequest
+}
 
-  // Now let's connect our component!
-  // With redux v4's improved typings, we can finally omit generics here.
-  export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(PoolPage)
-
-
+// Now let's connect our component!
+// With redux v4's improved typings, we can finally omit generics here.
+export default connect(mapStateToProps, mapDispatchToProps)(PoolPage)
 
 const PageContent = styled('article')`
   max-width: ${props => props.theme.widths.lg};
