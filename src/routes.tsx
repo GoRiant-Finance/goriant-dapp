@@ -8,6 +8,7 @@ import { MarketProvider } from './contexts/market'
 import PoolPage from './pages/pool'
 import Root from './components/layout/Root'
 import Header from './components/layout/Header'
+import Footer from './components/layout/Footer'
 import normalize from './styles/normalize'
 import globals from './styles/globals'
 
@@ -36,6 +37,7 @@ const Routes: React.FC = () => (
                 </Route>
                 <Route path="/pool" component={PoolPage} />
               </Switch>
+              <Footer></Footer>
             </MarketProvider>
           </AccountsProvider>
         </WalletProvider>
