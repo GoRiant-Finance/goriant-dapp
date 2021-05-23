@@ -1,12 +1,20 @@
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
+import { all, delay,fork, put, takeEvery } from 'redux-saga/effects'
 import { PoolActionTypes } from './types'
 import { fetchError, fetchSuccess } from './actions'
-import { callApi } from '../../utils/api'
 
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.opendota.com'
+
 
 function* handleFetch() {
-  ///fech data
+
+  const data= {
+    lockedNum: Math.floor(Math.random() * 100000000000),
+    userEarnedNum: Math.floor(Math.random() * 100000000000),
+  }
+
+  yield delay(2000)
+  yield put(fetchSuccess(data))
+
+
 }
 
 // This is our watcher function. We use `take*()` functions to watch Redux for a specific action
@@ -16,8 +24,8 @@ function* watchFetchRequest() {
 }
 
 // We can also use `fork()` here to split our saga into multiple watchers.
-function* heroesSaga() {
+function* poolSaga() {
   yield all([fork(watchFetchRequest)])
 }
 
-export default heroesSaga
+export default poolSaga

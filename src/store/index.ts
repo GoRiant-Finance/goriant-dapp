@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux'
 import { connectRouter, RouterState } from 'connected-react-router'
 import { History } from 'history'
-
+import { all, fork } from 'redux-saga/effects'
 import { LayoutState, layoutReducer } from './layout'
+import poolSaga from './pool/sagas'
 import { PoolState } from './pool/types'
 import { poolReducer } from './pool/reducer'
 
@@ -24,3 +25,10 @@ export const createRootReducer = (history: History) =>
     pool: poolReducer,
     router: connectRouter(history)
   })
+
+  // Here we use `redux-saga` to trigger actions asynchronously. `redux-saga` uses something called a
+// "generator function", which you can read about here:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
+export function* rootSaga() {
+  yield all([fork(poolSaga)])
+}

@@ -200,6 +200,7 @@ export const isSmallNumber = (val: number) => {
   return val < 0.001 && val > 0;
 };
 
+
 export const formatNumber = {
   format: (val?: number, useSmall?: boolean) => {
     if (!val) {

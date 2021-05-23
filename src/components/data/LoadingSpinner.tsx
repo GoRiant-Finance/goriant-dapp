@@ -32,15 +32,26 @@ const CubeMove = keyframes`
 
 const Spinner = styled('div')`
   margin: 100px auto;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   position: relative;
 
-  & .cube1,
+  & .cube1 {
+    background-color: #F9F9FA;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    -webkit-animation: ${CubeMove} 1.8s infinite ease-in-out;
+    animation: ${CubeMove} 1.8s infinite ease-in-out;
+  }
+
   & .cube2 {
-    background-color: ${props => props.theme.colors.brand};
-    width: 15px;
-    height: 15px;
+    background-color: #FFCC00;
+    width: 20px;
+    height: 20px;
     position: absolute;
     top: 0;
     left: 0;

@@ -3,7 +3,10 @@ import { PoolState, PoolActionTypes } from './types'
 
 // Type-safe initialState!
 export const initialState: PoolState = {
-  data: [],
+  data: {
+    lockedNum: 321,
+    userEarnedNum: 31
+  },
   errors: undefined,
   loading: false
 }

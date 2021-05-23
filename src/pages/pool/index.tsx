@@ -8,9 +8,14 @@ import './../../core.less'
 import './../../pool.less'
 import { connect } from 'react-redux'
 import { Pool } from '../../store/pool/types'
-
+import { fetchRequest } from '../../store/pool/actions'
 import { ApplicationState } from '../../store'
 import { Row, Col } from 'antd'
+import LoadingOverlay from '../../components/data/LoadingOverlay'
+import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
+import LoadingSpinner from '../../components/data/LoadingSpinner'
+import {formatUSD} from "../../utils/utils";
+
 
 const style = { background: '#0092ff', padding: '8px 0' }
 const dark1 = '#28293D'
@@ -18,16 +23,17 @@ const dark1 = '#28293D'
 // Separate state props + dispatch props to their own interfaces.
 interface PropsFromState {
   loading: boolean
-  data: Pool[]
+  data: Pool
   errors?: string
 }
 
 // We can use `typeof` here to map our dispatch types to the props, like so.
 interface PropsFromDispatch {
-  //fetchRequest: typeof fetchRequest
+  fetchPool: typeof fetchRequest
 }
 interface State {
   riantPick?: string
+  rayPick?: string
   coinTypes: string[]
 }
 
@@ -38,38 +44,41 @@ class PoolPage extends React.Component<AllProps, State> {
   constructor(props: AllProps) {
     super(props)
     this.state = {
-      coinTypes: ['WITHRAW', 'DEPOSIT'],
-      riantPick: 'DEPOSIT'
+      coinTypes: ['withdraw', 'deposit'],
+      riantPick: 'deposit',
+      rayPick: 'deposit'
     }
   }
-
   public componentDidMount() {
-    // const { fetchRequest: fr } = this.props
-    // fr()
+    const { fetchPool: fr } = this.props
+    fr()
   }
   render() {
+    const { data, loading } = this.props
+
     const yourPick = this.state.riantPick
     const options = this.state.coinTypes.map((loan, key) => {
       const isCurrent = this.state.riantPick === loan
       return (
         <span key={key} className="radioPad">
-            <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
-              <input
-                className="text"
-                type="radio"
-                name="coffeeTypes"
-                id={loan}
-                value={loan}
-                onChange={this.handleRadio}
-              />
-              {loan}
-            </label>
+          <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
+            <input className="text" type="radio" name="riantTypes" id={loan} value={loan} onChange={this.handleRadio} />
+            {loan}
+          </label>
         </span>
       )
     })
     return (
+
       <Page>
         <Container>
+        {loading && (
+              <LoadingOverlay>
+                <LoadingOverlayInner>
+                  <LoadingSpinner />
+                </LoadingOverlayInner>
+              </LoadingOverlay>
+            )}
           <PageContent>
             <Row gutter={20} style={{ marginBottom: 30 }}>
               <Col xs={24} sm={10}>
@@ -77,13 +86,13 @@ class PoolPage extends React.Component<AllProps, State> {
                   <Col span={24}>
                     <Card bordered={false} style={{ background: dark1, borderRadius: 16, marginBottom: 20 }}>
                       <CardTitle>Total Value Locked</CardTitle>
-                      <CardNumber>$1,232,323,323.00</CardNumber>
+                      <CardNumber>{formatUSD.format(data.lockedNum)}</CardNumber>
                     </Card>
                   </Col>
                   <Col span={24}>
                     <Card bordered={false} style={{ background: dark1, borderRadius: 16 }}>
                       <CardTitle>Total User Earned</CardTitle>
-                      <CardNumber>$32,323,323.00</CardNumber>
+                      <CardNumber>{formatUSD.format(data.userEarnedNum)}</CardNumber>
                     </Card>{' '}
                   </Col>
                 </Row>{' '}
@@ -170,10 +179,7 @@ class PoolPage extends React.Component<AllProps, State> {
                       <div className="number">20.195</div>
                     </Col>
                     <Col className="withdraw-deposit-container" span={11}>
-                      <div>
-                      {options}
-
-                      </div>
+                      <div>{options}</div>
                       <Row className="stake-amount">
                         <Col span={18} className="number-container">
                           <Row>
@@ -282,7 +288,7 @@ class PoolPage extends React.Component<AllProps, State> {
     )
   }
   handleRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({riantPick: e.target.value})
+    this.setState({ riantPick: e.target.value })
   }
 }
 
@@ -294,8 +300,10 @@ const mapStateToProps = ({ pool }: ApplicationState) => ({
 
 // mapDispatchToProps is especially useful for constraining our actions to the connected component.
 // You can access these via `this.props`.
+// mapDispatchToProps is especially useful for constraining our actions to the connected component.
+// You can access these via `this.props`.
 const mapDispatchToProps = {
-  //fetchRequest
+  fetchPool: fetchRequest
 }
 
 // Now let's connect our component!
