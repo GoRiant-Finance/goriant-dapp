@@ -51,7 +51,7 @@ const Footer = () => (
                 <Icon href='#'><img src="img/Twitter.png" /></Icon>
                 <Icon href='#'><img src="img/Instagram.png" /></Icon>
                 <Icon href='#'><img src="img/Facebook.png" /></Icon>
-                <Icon href='#'><img src="img/Youtube.png" /></Icon>
+                <Icon href='#'><img src="img/Yutube.png" /></Icon>
             </FooterRight>
         </FooterInner>
     </Wrapper>
