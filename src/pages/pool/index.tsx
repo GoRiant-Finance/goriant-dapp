@@ -169,7 +169,7 @@ class PoolPage extends React.Component<AllProps, State> {
                       <div className="text">Staked</div>
                       <div className="number">42.00</div>
                     </Col>
-                    <Col sm={5} xs={24} className="detail-button" span={2}>
+                    <Col sm={2} xs={24} className="detail-button" span={2}>
                     <a onClick={() => this.hideComponent("showRiant")}>Detail</a>
                     </Col>
                   </Row>
@@ -245,7 +245,7 @@ class PoolPage extends React.Component<AllProps, State> {
                       <div className="text">Staked</div>
                       <div className="number">42.00</div>
                     </Col>
-                    <Col sm={5} xs={24} className="detail-button" span={2}>
+                    <Col sm={2} xs={24} className="detail-button" span={2}>
                       <a onClick={() => this.hideComponent("showRay")}>Detail</a>
                     </Col>
                   </Row>
