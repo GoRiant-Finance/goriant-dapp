@@ -4,7 +4,7 @@ import Container from './Container'
 import { Row, Col } from 'antd'
 
 const Wrapper = styled('footer')`
-  padding: 0.5rem 1.5rem;
+  padding: 1rem 1.5rem;
   left: 0px;
   right: 0px;
   bottom: 0;
@@ -27,10 +27,9 @@ const FooterLeft = styled('div')`
 const FooterRight = styled('div')`
   margin-left: auto;
   text-align: right;
-  @media (min-width: ${props => props.theme.breakpoints.xs}) {
+  @media (max-width: ${props => props.theme.breakpoints.sm}) {
     padding-top: 1em;
     text-align: left;
-
   }
 `
 
