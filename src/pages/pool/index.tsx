@@ -14,8 +14,7 @@ import { Row, Col } from 'antd'
 import LoadingOverlay from '../../components/data/LoadingOverlay'
 import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
 import LoadingSpinner from '../../components/data/LoadingSpinner'
-import {formatUSD} from "../../utils/utils";
-
+import { formatUSD } from '../../utils/utils'
 
 const style = { background: '#0092ff', padding: '8px 0' }
 const dark1 = '#28293D'
@@ -35,6 +34,8 @@ interface State {
   riantPick?: string
   rayPick?: string
   coinTypes: string[]
+  showRiant: boolean
+  showRay: boolean
 }
 
 // Combine both state + dispatch props - as well as any props we want to pass - in a union type.
@@ -46,12 +47,27 @@ class PoolPage extends React.Component<AllProps, State> {
     this.state = {
       coinTypes: ['withdraw', 'deposit'],
       riantPick: 'deposit',
-      rayPick: 'deposit'
+      rayPick: 'deposit',
+      showRiant: false,
+      showRay: false
     }
   }
   public componentDidMount() {
     const { fetchPool: fr } = this.props
     fr()
+  }
+
+  hideComponent(name : string) {
+    console.log(name);
+    switch (name) {
+      case "showRiant":
+        this.setState({ showRiant: !this.state.showRiant });
+        break;
+      case "showRay":
+        this.setState({ showRay: !this.state.showRay });
+        break;
+      default:
+    }
   }
   render() {
     const { data, loading } = this.props
@@ -69,16 +85,15 @@ class PoolPage extends React.Component<AllProps, State> {
       )
     })
     return (
-
       <Page>
         <Container>
-        {loading && (
-              <LoadingOverlay>
-                <LoadingOverlayInner>
-                  <LoadingSpinner />
-                </LoadingOverlayInner>
-              </LoadingOverlay>
-            )}
+          {loading && (
+            <LoadingOverlay>
+              <LoadingOverlayInner>
+                <LoadingSpinner />
+              </LoadingOverlayInner>
+            </LoadingOverlay>
+          )}
           <PageContent>
             <Row gutter={20} style={{ marginBottom: 30 }}>
               <Col xs={24} sm={10}>
@@ -155,52 +170,54 @@ class PoolPage extends React.Component<AllProps, State> {
                       <div className="number">42.00</div>
                     </Col>
                     <Col className="detail-button" span={2}>
-                      <div>Detail ^</div>
+                    <a onClick={() => this.hideComponent("showRiant")}>Detail</a>
                     </Col>
                   </Row>
-                  <Row className="feature-container">
-                    <Col className="contract-info" span={5}>
-                      <div className="set-pair-info">
-                        <ArrowLeftIcon /> Set Pair Info
-                      </div>
-                      <div className="view-contract">
-                        <ArrowLeftIcon />
-                        View Contract
-                      </div>
-                      <Row className="auto">
-                        <div className="button">
-                          <AutoIcon /> <span className="text">AUTO</span>
+                  {this.state.showRiant && (
+                    <Row className="feature-container">
+                      <Col className="contract-info" span={5}>
+                        <div className="set-pair-info">
+                          <ArrowLeftIcon /> Set Pair Info
                         </div>
-                        <Info />
-                      </Row>
-                    </Col>
-                    <Col className="staked-container" span={4}>
-                      <div className="text">STAKED</div>
-                      <div className="number">20.195</div>
-                    </Col>
-                    <Col className="withdraw-deposit-container" span={11}>
-                      <div>{options}</div>
-                      <Row className="stake-amount">
-                        <Col span={18} className="number-container">
-                          <Row>
-                            <Col className="number" span={17}>
-                              0
-                            </Col>
-                            <Col className="text" span={3}>
-                              <span>RIANT</span>
-                            </Col>
-                            <Col className="max-button" span={3}>
-                              <div className="button">MAX</div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col className="deposit-button-container" span={6}>
-                          <div className="deposit-button">{yourPick}</div>
-                        </Col>
-                      </Row>
-                      <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
-                    </Col>
-                  </Row>
+                        <div className="view-contract">
+                          <ArrowLeftIcon />
+                          View Contract
+                        </div>
+                        <Row className="auto">
+                          <div className="button">
+                            <AutoIcon /> <span className="text">AUTO</span>
+                          </div>
+                          <Info />
+                        </Row>
+                      </Col>
+                      <Col className="staked-container" span={4}>
+                        <div className="text">STAKED</div>
+                        <div className="number">20.195</div>
+                      </Col>
+                      <Col className="withdraw-deposit-container" span={11}>
+                        <div>{options}</div>
+                        <Row className="stake-amount">
+                          <Col span={18} className="number-container">
+                            <Row>
+                              <Col className="number" span={17}>
+                                0
+                              </Col>
+                              <Col className="text" span={3}>
+                                <span>RIANT</span>
+                              </Col>
+                              <Col className="max-button" span={3}>
+                                <div className="button">MAX</div>
+                              </Col>
+                            </Row>
+                          </Col>
+                          <Col className="deposit-button-container" span={6}>
+                            <div className="deposit-button">{yourPick}</div>
+                          </Col>
+                        </Row>
+                        <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
+                      </Col>
+                    </Row>
+                  )}
                 </Card>{' '}
               </Col>
               <Col span={24}>
@@ -229,9 +246,10 @@ class PoolPage extends React.Component<AllProps, State> {
                       <div className="number">42.00</div>
                     </Col>
                     <Col className="detail-button" span={2}>
-                      <div>Detail v</div>
+                      <a onClick={() => this.hideComponent("showRay")}>Detail</a>
                     </Col>
                   </Row>
+                  {this.state.showRay && (
                   <Row className="feature-container">
                     <Col className="contract-info" span={5}>
                       <div className="set-pair-info">
@@ -279,6 +297,7 @@ class PoolPage extends React.Component<AllProps, State> {
                       <div className="wallet-balance">WALLET BALANCE: 0.000 RAY</div>
                     </Col>
                   </Row>
+                  )}
                 </Card>{' '}
               </Col>
             </Row>
