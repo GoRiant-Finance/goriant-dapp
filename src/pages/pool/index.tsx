@@ -117,7 +117,7 @@ class PoolPage extends React.Component<AllProps, State> {
                 <Card className="farmsPanel" bordered={false} style={{ background: dark1, borderRadius: 16, height: '100%' }}>
                   <CardTitle>Farms & Staking</CardTitle>
                   <Row gutter={16} style={{ verticalAlign: 'text-bottom', position: 'relative' }}>
-                    <Col span={14}>
+                    <Col xs={24} sm={14}>
                       <CardDashed className="farmsContainer">
                         <div className="harvest">
                           <div className="info">
@@ -135,7 +135,7 @@ class PoolPage extends React.Component<AllProps, State> {
                         </div>
                       </CardDashed>
                     </Col>
-                    <Col span={8}>
+                    <Col xs={24} sm={8}>
                       <div className="button">Harvest all (2)</div>
                     </Col>
                   </Row>{' '}
@@ -175,7 +175,9 @@ class PoolPage extends React.Component<AllProps, State> {
                   </Row>
                   {this.state.showRiant && (
                     <Row className="feature-container">
-                      <Col className="contract-info" span={5}>
+                      <Col span={5}>
+                      <div className="contract-info">
+
                         <div className="set-pair-info">
                           <ArrowLeftIcon /> Set Pair Info
                         </div>
@@ -189,20 +191,21 @@ class PoolPage extends React.Component<AllProps, State> {
                           </div>
                           <Info />
                         </Row>
+                        </div>
                       </Col>
                       <Col className="staked-container" span={4}>
                         <div className="text">STAKED</div>
                         <div className="number">20.195</div>
                       </Col>
-                      <Col className="withdraw-deposit-container" span={11}>
+                      <Col className="withdraw-deposit-container" sm={11} xs={24} >
                         <div>{options}</div>
                         <Row className="stake-amount">
-                          <Col span={18} className="number-container">
+                          <Col sm={18} xs={24} className="number-container">
                             <Row>
-                              <Col className="number" span={17}>
+                              <Col className="number" sm={17} xs={15}>
                                 0
                               </Col>
-                              <Col className="text" span={3}>
+                              <Col className="text" sm={3} xs={6}>
                                 <span>RIANT</span>
                               </Col>
                               <Col className="max-button" span={3}>
@@ -210,7 +213,7 @@ class PoolPage extends React.Component<AllProps, State> {
                               </Col>
                             </Row>
                           </Col>
-                          <Col className="deposit-button-container" span={6}>
+                          <Col className="deposit-button-container"  sm={6} xs={24}>
                             <div className="deposit-button">{yourPick}</div>
                           </Col>
                         </Row>
@@ -250,53 +253,52 @@ class PoolPage extends React.Component<AllProps, State> {
                     </Col>
                   </Row>
                   {this.state.showRay && (
-                  <Row className="feature-container">
-                    <Col className="contract-info" span={5}>
-                      <div className="set-pair-info">
-                        <ArrowLeftIcon /> Set Pair Info
-                      </div>
-                      <div className="view-contract">
-                        <ArrowLeftIcon />
-                        View Contract
-                      </div>
-                      <Row className="auto">
-                        <div className="button">
-                          <AutoIcon /> <span className="text">AUTO</span>
-                        </div>
-                        <Info />
-                      </Row>
-                    </Col>
-                    <Col className="staked-container" span={4}>
-                      <div className="text">STAKED</div>
-                      <div className="number">20.195</div>
-                    </Col>
-                    <Col className="withdraw-deposit-container" span={11}>
-                      <div>
-                        <span className="text">WITHRAW</span>
-                        <span className="dash">|</span>
-                        <span className="text text-gradient-4">DEPOSIT</span>
-                      </div>
-                      <Row className="stake-amount">
-                        <Col span={18} className="number-container">
-                          <Row>
-                            <Col className="number" span={17}>
-                              0
-                            </Col>
-                            <Col className="text" span={3}>
-                              <span>RAY</span>
-                            </Col>
-                            <Col className="max-button" span={3}>
-                              <div className="button">MAX</div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col className="deposit-button-container" span={6}>
-                          <div className="deposit-button">Deposit</div>
-                        </Col>
-                      </Row>
-                      <div className="wallet-balance">WALLET BALANCE: 0.000 RAY</div>
-                    </Col>
-                  </Row>
+                   <Row className="feature-container">
+                   <Col span={5}>
+                   <div className="contract-info">
+
+                     <div className="set-pair-info">
+                       <ArrowLeftIcon /> Set Pair Info
+                     </div>
+                     <div className="view-contract">
+                       <ArrowLeftIcon />
+                       View Contract
+                     </div>
+                     <Row className="auto">
+                       <div className="button">
+                         <AutoIcon /> <span className="text">AUTO</span>
+                       </div>
+                       <Info />
+                     </Row>
+                     </div>
+                   </Col>
+                   <Col className="staked-container" span={4}>
+                     <div className="text">STAKED</div>
+                     <div className="number">20.195</div>
+                   </Col>
+                   <Col className="withdraw-deposit-container" sm={11} xs={24} >
+                     <div>{options}</div>
+                     <Row className="stake-amount">
+                       <Col sm={18} xs={24} className="number-container">
+                         <Row>
+                           <Col className="number" sm={17} xs={15}>
+                             0
+                           </Col>
+                           <Col className="text" sm={3} xs={6}>
+                             <span>RAY</span>
+                           </Col>
+                           <Col className="max-button" span={3}>
+                             <div className="button">MAX</div>
+                           </Col>
+                         </Row>
+                       </Col>
+                       <Col className="deposit-button-container"  sm={6} xs={24}>
+                         <div className="deposit-button">{yourPick}</div>
+                       </Col>
+                     </Row>
+                     <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
+                   </Col>
+                 </Row>
                   )}
                 </Card>{' '}
               </Col>
