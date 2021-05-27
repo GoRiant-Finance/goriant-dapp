@@ -153,23 +153,23 @@ class PoolPage extends React.Component<AllProps, State> {
                   }}
                 >
                   <Row className="compounding-info goriant">
-                    <Col sm={2} xs={8} className="logo-container">
+                    <Col sm={2} xs={8} md={4} className="logo-container">
                       <Coin />
                       <span className="text-yellow-1">RIANT</span>
                     </Col>
-                    <Col sm={8} xs={16} className="apy-container text-green-light">
+                    <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
                       <div className="percent">131.63%</div>
                       <div className="text">Auto-Compounding</div>
                     </Col>
-                    <Col sm={5} xs={24}  className="total-container">
+                    <Col sm={5} xs={24} md={6} className="total-container">
                       <div className="text">Total Stake</div>
                       <div className="number">248,007,819.70</div>
                     </Col>
-                    <Col sm={5} xs={24} className="staked-container">
+                    <Col sm={5} xs={24} md={4} className="staked-container">
                       <div className="text">Staked</div>
                       <div className="number">42.00</div>
                     </Col>
-                    <Col sm={2} xs={24} className="detail-button" span={2}>
+                    <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
                     <a onClick={() => this.hideComponent("showRiant")}>Detail</a>
                     </Col>
                   </Row>
@@ -232,23 +232,23 @@ class PoolPage extends React.Component<AllProps, State> {
                   }}
                 >
                   <Row className="compounding-info ray">
-                  <Col sm={2} xs={8} className="logo-container">
+                  <Col sm={2} xs={8} md={4} className="logo-container">
                       <Ray />
                       <span className="">RAY</span>
                     </Col>
-                    <Col sm={8} xs={16} className="apy-container text-green-light">
+                    <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
                       <div className="percent">131.63%</div>
                       <div className="text">Auto-Compounding</div>
                     </Col>
-                    <Col sm={5} xs={24} className="total-container">
+                    <Col sm={5} xs={24} md={6} className="total-container">
                       <div className="text">Total Stake</div>
                       <div className="number">248,007,819.70</div>
                     </Col>
-                    <Col sm={5} xs={24} className="staked-container">
+                    <Col sm={5} xs={24} md={4} className="staked-container">
                       <div className="text">Staked</div>
                       <div className="number">42.00</div>
                     </Col>
-                    <Col sm={2} xs={24} className="detail-button" span={2}>
+                    <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
                       <a onClick={() => this.hideComponent("showRay")}>Detail</a>
                     </Col>
                   </Row>
@@ -369,6 +369,11 @@ const CardNumber = styled('p')`
   @media (max-width: ${props => props.theme.breakpoints.sm}) {
     font-size: 24px;
   }
+
+  @media (max-width: ${props => props.theme.breakpoints.lg}) {
+    font-size: 22px;
+  }
+
   /* or 137% */
   color: #06c270;
   text-shadow: 4px 0px 40px #57eba1;
