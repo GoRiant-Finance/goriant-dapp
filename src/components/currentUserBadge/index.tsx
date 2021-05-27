@@ -1,11 +1,8 @@
-import React, {useEffect} from 'react'
-import {useWallet, WalletAdapter} from "../../contexts/wallet";
+import React from 'react'
 import styled from '../../utils/styled'
 import {shortenAddress} from "../../utils/utils";
-import {useConnection} from "../../contexts/connection";
 import StakingClient from "../../solana/StakingClient";
-import {Connection} from "@solana/web3.js";
-import {web3} from "@project-serum/anchor";
+
 
 const OptionButton = styled('div')`
   display: inline-block;
@@ -21,15 +18,6 @@ const IconMenu: React.FC = () => (
   </svg>
 )
 
-const getBalance = async (conn: Connection, wallet: WalletAdapter | undefined) => {
-  if (wallet && wallet.publicKey) {
-    const c = new StakingClient()
-    const b = await c.balance(conn, new web3.PublicKey("FY3QHJREKMii9jgQCTa7bthUHZ1X6Gsbz8PWtcmcUXrd"))
-    console.log("Wallet address: ", wallet.publicKey.toBase58())
-    console.log("Balance of wallet: ", b)
-  }
-}
-
 export class CurrentUserBadge extends React.Component<any, any> {
   constructor(props: any) {
     super(props)
@@ -37,13 +25,14 @@ export class CurrentUserBadge extends React.Component<any, any> {
       connection: props.connection,
       wallet: props.wallet
     }
-    // (window as any).CurrentProvider = provider;
   }
 
   async componentDidMount() {
     const {connection, wallet} = this.state
-    const balance = await getBalance(connection, wallet)
-    this.setState({balance})
+    if (wallet && wallet.publicKey) {
+      const balance = await StakingClient.getBalance(connection, wallet.publicKey)
+      this.setState({balance})
+    }
   }
 
   render() {
@@ -53,7 +42,7 @@ export class CurrentUserBadge extends React.Component<any, any> {
     console.log("Current wallet balance : ", this.state.balance)
     return (
       <span style={{fontSize: 19}}>
-        {shortenAddress(`${this.state.wallet.publicKey}`)} Balance: ${this.state.balance}
+        {shortenAddress(`${this.state.wallet.publicKey}`)} Balance: {this.state.balance} SOL
         <OptionButton>
           <IconMenu/>
         </OptionButton>

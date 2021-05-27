@@ -6,7 +6,7 @@ import {useConnection} from "../../contexts/connection";
 
 export const ConnectStatus = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const {  wallet, connected } = useWallet()
-  const { connection } = useConnection()
+  const connection = useConnection()
 
   const ConnectStatus = (
       <div>

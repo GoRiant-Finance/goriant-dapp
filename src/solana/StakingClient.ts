@@ -1,13 +1,13 @@
-import {Connection, PublicKey} from '@solana/web3.js'
+import {Connection, LAMPORTS_PER_SOL, PublicKey} from '@solana/web3.js'
 import config from './staking-config.json'
 
 const STAKING_PROGRAM_ID = config.config['staking.programId']
 
 export default class StakingClient {
-  public async balance(connection: Connection, wallet: PublicKey) {
+  public static async getBalance(connection: Connection, wallet: PublicKey) {
     const balance = await connection.getBalance(wallet)
-    console.log('Balance: ', balance)
-    return balance
+    if (balance && balance > 0)
+      return balance / LAMPORTS_PER_SOL
     return 0
   }
 }
