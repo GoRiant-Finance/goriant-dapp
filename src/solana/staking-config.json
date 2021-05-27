@@ -1,0 +1,594 @@
+{
+  "config": {
+    "staking.programId": "AW8oLqDaWPGhhkF9763R32eazgooLrboEavM1ywZxirr",
+    "token": "FZDkuoR2L8MxPowTGRKJbjTcuXBukg96kcpv7VW7TPws"
+  },
+  "idl": {
+    "version": "0.0.0",
+    "name": "staking",
+    "instructions": [
+      {
+        "name": "createMember",
+        "accounts": [
+          {
+            "name": "stakingPool",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "member",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "authority",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "balances",
+            "accounts": [
+              {
+                "name": "spt",
+                "isMut": true,
+                "isSigner": false
+              },
+              {
+                "name": "vaultStake",
+                "isMut": true,
+                "isSigner": false
+              },
+              {
+                "name": "vaultPw",
+                "isMut": true,
+                "isSigner": false
+              }
+            ]
+          },
+          {
+            "name": "memberImprint",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "rent",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "memberNonce",
+            "type": "u8"
+          }
+        ]
+      },
+      {
+        "name": "depositAndState",
+        "accounts": [
+          {
+            "name": "stakingPool",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "poolMint",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "imprint",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "member",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "authority",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "balances",
+            "accounts": [
+              {
+                "name": "spt",
+                "isMut": true,
+                "isSigner": false
+              },
+              {
+                "name": "vaultStake",
+                "isMut": true,
+                "isSigner": false
+              },
+              {
+                "name": "vaultPw",
+                "isMut": true,
+                "isSigner": false
+              }
+            ]
+          },
+          {
+            "name": "memberImprint",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "depositor",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "depositorAuthority",
+            "isMut": false,
+            "isSigner": true
+          },
+          {
+            "name": "tokenProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "clock",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "rent",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      },
+      {
+        "name": "dropReward",
+        "accounts": [
+          {
+            "name": "rewardEventQueue",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "vendor",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "vendorVault",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "depositor",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "depositorAuthority",
+            "isMut": false,
+            "isSigner": true
+          },
+          {
+            "name": "tokenProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "clock",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "rent",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      },
+      {
+        "name": "claimReward",
+        "accounts": [],
+        "args": []
+      },
+      {
+        "name": "withdraw",
+        "accounts": [
+          {
+            "name": "stakingPool",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "poolMint",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "member",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "authority",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "balances",
+            "accounts": [
+              {
+                "name": "spt",
+                "isMut": true,
+                "isSigner": false
+              },
+              {
+                "name": "vaultStake",
+                "isMut": true,
+                "isSigner": false
+              },
+              {
+                "name": "vaultPw",
+                "isMut": true,
+                "isSigner": false
+              }
+            ]
+          },
+          {
+            "name": "memberImprint",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "beneficial",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "beneficialAuthority",
+            "isMut": false,
+            "isSigner": true
+          },
+          {
+            "name": "tokenProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "clock",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "rent",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    ],
+    "state": {
+      "struct": {
+        "name": "StakingPool",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "key",
+              "type": "publicKey"
+            },
+            {
+              "name": "authority",
+              "type": "publicKey"
+            },
+            {
+              "name": "imprint",
+              "type": "publicKey"
+            },
+            {
+              "name": "nonce",
+              "type": "u8"
+            },
+            {
+              "name": "withdrawTimeLock",
+              "type": "i64"
+            },
+            {
+              "name": "rewardEventQ",
+              "type": "publicKey"
+            },
+            {
+              "name": "mint",
+              "type": "publicKey"
+            },
+            {
+              "name": "poolMint",
+              "type": "publicKey"
+            },
+            {
+              "name": "vendor",
+              "type": "publicKey"
+            },
+            {
+              "name": "stakeRate",
+              "type": "u64"
+            }
+          ]
+        }
+      },
+      "methods": [
+        {
+          "name": "new",
+          "accounts": [
+            {
+              "name": "authority",
+              "isMut": false,
+              "isSigner": true
+            },
+            {
+              "name": "vendor",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vendorVault",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "rewardEventQ",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "poolMint",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "rent",
+              "isMut": false,
+              "isSigner": false
+            }
+          ],
+          "args": [
+            {
+              "name": "mint",
+              "type": "publicKey"
+            },
+            {
+              "name": "statePubKey",
+              "type": "publicKey"
+            },
+            {
+              "name": "vendorPubKey",
+              "type": "publicKey"
+            },
+            {
+              "name": "stakingPoolNonce",
+              "type": "u8"
+            },
+            {
+              "name": "vendorNonce",
+              "type": "u8"
+            },
+            {
+              "name": "stakeRate",
+              "type": "u64"
+            },
+            {
+              "name": "withdrawTimeLock",
+              "type": "i64"
+            }
+          ]
+        }
+      ]
+    },
+    "accounts": [
+      {
+        "name": "RewardVendor",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "vault",
+              "type": "publicKey"
+            },
+            {
+              "name": "mint",
+              "type": "publicKey"
+            },
+            {
+              "name": "nonce",
+              "type": "u8"
+            },
+            {
+              "name": "poolTokenSupply",
+              "type": "u64"
+            },
+            {
+              "name": "positionInRewardQueue",
+              "type": "u32"
+            },
+            {
+              "name": "startTs",
+              "type": "i64"
+            },
+            {
+              "name": "expiryTs",
+              "type": "i64"
+            },
+            {
+              "name": "expiryReceiver",
+              "type": "publicKey"
+            },
+            {
+              "name": "from",
+              "type": "publicKey"
+            },
+            {
+              "name": "total",
+              "type": "u64"
+            },
+            {
+              "name": "expired",
+              "type": "bool"
+            },
+            {
+              "name": "activated",
+              "type": "bool"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Member",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "authority",
+              "type": "publicKey"
+            },
+            {
+              "name": "metadata",
+              "type": "publicKey"
+            },
+            {
+              "name": "balances",
+              "type": {
+                "defined": "BalanceSandbox"
+              }
+            },
+            {
+              "name": "rewardsCursor",
+              "type": "u32"
+            },
+            {
+              "name": "lastStakeTs",
+              "type": "i64"
+            },
+            {
+              "name": "nonce",
+              "type": "u8"
+            }
+          ]
+        }
+      },
+      {
+        "name": "RewardQueue",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "head",
+              "type": "u32"
+            },
+            {
+              "name": "tail",
+              "type": "u32"
+            },
+            {
+              "name": "events",
+              "type": {
+                "vec": {
+                  "defined": "RewardEvent"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "types": [
+      {
+        "name": "BalanceSandbox",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "spt",
+              "type": "publicKey"
+            },
+            {
+              "name": "vaultStake",
+              "type": "publicKey"
+            },
+            {
+              "name": "vaultPw",
+              "type": "publicKey"
+            }
+          ]
+        }
+      },
+      {
+        "name": "RewardPolicy",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "startDropTs",
+              "type": "i64"
+            },
+            {
+              "name": "endDropTs",
+              "type": "i64"
+            },
+            {
+              "name": "interval",
+              "type": "i64"
+            },
+            {
+              "name": "isAllowClaimMidStake",
+              "type": "bool"
+            }
+          ]
+        }
+      },
+      {
+        "name": "RewardEvent",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "vendor",
+              "type": "publicKey"
+            },
+            {
+              "name": "ts",
+              "type": "i64"
+            }
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "address": "2Mw1uanXQFKTxzr6xTLPAjCLECpZafVSeX8TAp5Wymfj"
+    }
+  }
+}

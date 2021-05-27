@@ -157,8 +157,6 @@ export function WalletProvider({ children = null as any }) {
   const select = useCallback(() => {console.log("test select") ;setIsModalVisible(true); console.log(isModalVisible)}, []);
   const close = useCallback(() => setIsModalVisible(false), []);
 
-  console.log(select)
-
   return (
     <WalletContext.Provider
       value={{

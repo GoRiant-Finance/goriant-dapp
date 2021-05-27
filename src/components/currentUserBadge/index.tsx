@@ -1,7 +1,11 @@
-import React from "react";
-import { useWallet } from "../../contexts/wallet";
+import React, {useEffect} from 'react'
+import {useWallet, WalletAdapter} from "../../contexts/wallet";
 import styled from '../../utils/styled'
-import { shortenAddress } from "../../utils/utils";
+import {shortenAddress} from "../../utils/utils";
+import {useConnection} from "../../contexts/connection";
+import StakingClient from "../../solana/StakingClient";
+import {Connection} from "@solana/web3.js";
+import {web3} from "@project-serum/anchor";
 
 const OptionButton = styled('div')`
   display: inline-block;
@@ -11,24 +15,49 @@ const OptionButton = styled('div')`
   cursor: pointer;
 `
 const IconMenu: React.FC = () => (
-  <svg height="15px" width="15px" id="Layer_1" version="1.1" viewBox="0 0 32 32" >
-    <path stroke="white" fill="white" d="M4,10h24c1.104,0,2-0.896,2-2s-0.896-2-2-2H4C2.896,6,2,6.896,2,8S2.896,10,4,10z M28,14H4c-1.104,0-2,0.896-2,2  s0.896,2,2,2h24c1.104,0,2-0.896,2-2S29.104,14,28,14z M28,22H4c-1.104,0-2,0.896-2,2s0.896,2,2,2h24c1.104,0,2-0.896,2-2  S29.104,22,28,22z"/>
+  <svg height="15px" width="15px" id="Layer_1" version="1.1" viewBox="0 0 32 32">
+    <path stroke="white" fill="white"
+          d="M4,10h24c1.104,0,2-0.896,2-2s-0.896-2-2-2H4C2.896,6,2,6.896,2,8S2.896,10,4,10z M28,14H4c-1.104,0-2,0.896-2,2  s0.896,2,2,2h24c1.104,0,2-0.896,2-2S29.104,14,28,14z M28,22H4c-1.104,0-2,0.896-2,2s0.896,2,2,2h24c1.104,0,2-0.896,2-2  S29.104,22,28,22z"/>
   </svg>
-) 
+)
 
-export const CurrentUserBadge = (props: {}) => {
-  const { wallet } = useWallet();
+const getBalance = async (conn: Connection, wallet: WalletAdapter | undefined) => {
+  if (wallet && wallet.publicKey) {
+    const c = new StakingClient()
+    const b = await c.balance(conn, new web3.PublicKey("FY3QHJREKMii9jgQCTa7bthUHZ1X6Gsbz8PWtcmcUXrd"))
+    console.log("Wallet address: ", wallet.publicKey.toBase58())
+    console.log("Balance of wallet: ", b)
+  }
+}
 
-  if (!wallet?.publicKey) {
-    return null;
+export class CurrentUserBadge extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props)
+    this.state = {
+      connection: props.connection,
+      wallet: props.wallet
+    }
+    // (window as any).CurrentProvider = provider;
   }
 
-  return (
+  async componentDidMount() {
+    const {connection, wallet} = this.state
+    const balance = await getBalance(connection, wallet)
+    this.setState({balance})
+  }
+
+  render() {
+    if (!this.state.wallet?.publicKey) {
+      return null
+    }
+    console.log("Current wallet balance : ", this.state.balance)
+    return (
       <span style={{fontSize: 19}}>
-        {shortenAddress(`${wallet.publicKey}`)}
+        {shortenAddress(`${this.state.wallet.publicKey}`)} Balance: ${this.state.balance}
         <OptionButton>
-          <IconMenu />
+          <IconMenu/>
         </OptionButton>
       </span>
-  );
+    );
+  }
 };

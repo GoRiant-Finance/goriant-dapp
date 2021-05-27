@@ -1,6 +1,5 @@
 import React from "react";
-import { notification } from "antd";
-// import Link from '../components/Link';
+import {notification} from "antd";
 
 export function notify({
   message = "",
