@@ -22,8 +22,8 @@ export default class StakingClient {
   public static async createMember(connection: Connection, wallet: Wallet) {
     initProgram(connection, wallet)
 
-    const statePubKey = new web3.PublicKey(config.program.state)
     const state = (await program.state()) as any
+    const statePubKey = state.address()
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
 
     console.log('member: ', member.toString())
@@ -70,8 +70,8 @@ export default class StakingClient {
     initProgram(connection, wallet)
 
     const god = new web3.PublicKey(config.program.vault)
-    const statePubKey = new web3.PublicKey(config.program.state)
-    const state = await program.state()
+    const state = (await program.state()) as any
+    const statePubKey = state.address()
 
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
     const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
@@ -118,11 +118,10 @@ export default class StakingClient {
   public static async withdraw(connection: Connection, wallet: Wallet) {
     initProgram(connection, wallet)
 
-    const mint = new web3.PublicKey(config.program.token)
     const tokenAccount = new web3.PublicKey(config.program.vault)
-    const statePubKey = new web3.PublicKey(config.program.state)
+    const state = (await program.state()) as any
+    const statePubKey = state.address()
 
-    const state = await program.state()
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
     const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
     const { balances } = memberAccount
@@ -162,13 +161,19 @@ export default class StakingClient {
 
       console.log('memberAccount.balances')
       console.log('spt: ', memberBalances.spt.toString(), ' - amount: ', await Utils.tokenBalance(connection, memberBalances.spt))
-      console.log('vaultStake: ', memberBalances.vaultStake.toString(), ' - amount: ', await Utils.tokenBalance(connection, memberBalances.vaultStake))
-      console.log('vaultPw: ', memberBalances.vaultPw.toString(), ' - amount: ', await Utils.tokenBalance(connection, memberBalances.vaultPw))
+      console.log(
+        'vaultStake: ',
+        memberBalances.vaultStake.toString(),
+        ' - amount: ',
+        await Utils.tokenBalance(connection, memberBalances.vaultStake)
+      )
+      console.log(
+        'vaultPw: ',
+        memberBalances.vaultPw.toString(),
+        ' - amount: ',
+        await Utils.tokenBalance(connection, memberBalances.vaultPw)
+      )
 
-      // const tokenAccounts = (await provider.connection.getTokenAccountsByOwner(provider.wallet.publicKey, { mint })).value
-      // tokenAccounts.forEach(account => {
-      //   console.log('account: ', account.pubkey.toString(), ' - amount: ', await Utils.tokenBalance(connection, connection, account.pubkey))
-      // })
     } catch (e) {
       console.log('Stake Error: ', e)
     }

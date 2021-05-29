@@ -1,9 +1,8 @@
 {
   "program": {
-    "staking.programId": "5mFJcDD3GeGVnEAUJUEytBBdSxKu8mcaAwBdTysjgzoy",
-    "token": "5qSexuYnLsRYamQA1xsRhgLESxj6VuUax3f9UMeLJnsi",
-    "vault": "FGQ36botKNUhgd1y4acvBf5gFiKeJ6w4tttz9cs4ubwt",
-    "state": "46NuGPUYLASmdicCDjmG1m6RzsFHFCL4JXDW3h6cvdPo"
+    "staking.programId": "4cLT1qbJobxb1gNEq7ZpWFwEYUKN8mXEohNXZuVvL5Ff",
+    "token": "56dGKgMYB1ctzSgMQJGtpFUskRFyMowKo8sh2bDDbxLy",
+    "vault": "8mPd9LKhJVZrjPoGJTtWBRyZMcD9GDegaJJfwwX2nAPv"
   },
   "idl": {
     "version": "0.0.0",
