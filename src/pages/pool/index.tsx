@@ -27,15 +27,14 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [showRay, setShowRay] = useState(false)
   const [coinTypes, setCoinTypes] = useState(['withdraw', 'deposit'])
   const [riantPick, setRiantPick] = useState('deposit')
-
+  const [totalStakedRiant, setTotalStakedRiant] = useState(0)
   const [balanceSol, setBalanceSol] = useState(0)
 
   useEffect(() => {
     async function fetchMyAPI() {
       if (wallet && wallet.publicKey) {
         const info = await StakingClient.getStakingPoolInfo(connection, wallet as any)
-        console.log('total staked :', info.totalStaked)
-        // setBalanceSol(info)
+        setTotalStakedRiant(info.totalStaked)
       }
     }
     setInterval(() => {
@@ -330,7 +329,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                   </Col>
                   <Col sm={5} xs={24} md={6} className="total-container">
                     <div className="text">Total Stake</div>
-                    <div className="number">248,007,819.70</div>
+                    <div className="number">{totalStakedRiant}</div>
                   </Col>
                   <Col sm={5} xs={24} md={4} className="staked-container">
                     <div className="text">Staked</div>
