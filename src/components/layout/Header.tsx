@@ -110,6 +110,17 @@ const UserId = styled('div')`
   }
 `
 
+const FaBar = styled('div')`
+  display: none;
+  @media (max-width: ${props => props.theme.breakpoints.sm}) {
+    float: right;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+`
+
 const Logo = () => (
   <svg width="80" height="104" viewBox="0 0 90 104" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter0_d)">
@@ -221,6 +232,16 @@ const CoreIcon: React.FC = () => (
   </svg>
 )
 
+const FaBarIcon: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+)
+
+// const [color, setColor] = useState(false);;
+const handleBoxClick = () => {
+  // setColor(color => !color);
+}
+
 const Header: React.FC<HeaderProps> = ({ title }) => (
   <Wrapper>
     <HeaderInner>
@@ -245,6 +266,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => (
           <ConnectStatus />
         </UserId>
       </div>
+      <FaBar onClick={handleBoxClick}>
+        <FaBarIcon></FaBarIcon>
+      </FaBar>
     </HeaderInner>
   </Wrapper>
 )
