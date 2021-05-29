@@ -1,7 +1,5 @@
-import { TokenAmount } from '@solana/web3.js'
-
 export interface StakingPoolInfo {
-  totalStaked: TokenAmount
+  totalStaked: any
   accumulateTokenRewardPerShare: number
   lastUpdateBlock: number
   rewardPerBlock: number

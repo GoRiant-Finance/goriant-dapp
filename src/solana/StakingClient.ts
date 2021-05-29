@@ -109,9 +109,6 @@ export default class StakingClient {
       console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
       console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
 
-      const memberBalances = memberAccount.balances
-
-      console.log('memberAccount.balances')
     } catch (e) {
       console.log('Stake Error: ', e)
     }
@@ -182,10 +179,12 @@ export default class StakingClient {
 
   public static async getStakingPoolInfo(connection: Connection, wallet: Wallet) {
     loadProgram(connection, wallet)
+
     const state = (await program.state()) as any
-    const totalStaked = (await provider.connection.getTokenSupply(state.poolMint)).value
+    const poolMint = await provider.connection.getTokenSupply(state.poolMint)
+    const totalStaked = poolMint.value
     const stakingPool: StakingPoolInfo = {
-      totalStaked,
+      totalStaked: totalStaked.uiAmount,
       accumulateTokenRewardPerShare: state.accTokenPerShare,
       lastUpdateBlock: state.lastRewardBlock,
       rewardPerBlock: state.rewardPerBlock,
