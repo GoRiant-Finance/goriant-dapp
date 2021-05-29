@@ -22,7 +22,7 @@ export default class StakingClient {
   }
 
   public static async createMember(connection: Connection, wallet: Wallet) {
-    initProgram(connection, wallet)
+    loadProgram(connection, wallet)
 
     const state = (await program.state()) as any
     const statePubKey = state.address()
@@ -69,7 +69,7 @@ export default class StakingClient {
   }
 
   public static async deposit(connection: Connection, wallet: Wallet) {
-    initProgram(connection, wallet)
+    loadProgram(connection, wallet)
 
     const god = new web3.PublicKey(config.program.vault)
     const state = (await program.state()) as any
@@ -118,7 +118,7 @@ export default class StakingClient {
   }
 
   public static async withdraw(connection: Connection, wallet: Wallet) {
-    initProgram(connection, wallet)
+    loadProgram(connection, wallet)
 
     const tokenAccount = new web3.PublicKey(config.program.vault)
     const state = (await program.state()) as any
@@ -181,8 +181,8 @@ export default class StakingClient {
     }
   }
 
-  public static async getStakingPoolViewInfo(connection: Connection, wallet: Wallet) {
-    initProgram(connection, wallet)
+  public static async getStakingPoolInfo(connection: Connection, wallet: Wallet) {
+    loadProgram(connection, wallet)
     const state = (await program.state()) as any
     const totalStaked = (await provider.connection.getTokenSupply(state.poolMint)).value
     const stakingPool: StakingPoolInfo = {
@@ -196,7 +196,7 @@ export default class StakingClient {
   }
 
   public static async getMemberInfo(connection: Connection, wallet: Wallet) {
-    initProgram(connection, wallet)
+    loadProgram(connection, wallet)
     const memberAssociatedAccount = await program.account.member.associated(wallet.publicKey)
     const vaultStakePubKey = memberAssociatedAccount.balances.vaultStake;
     const stakeAmount = (await provider.connection.getTokenAccountBalance(vaultStakePubKey)).value
@@ -209,7 +209,7 @@ export default class StakingClient {
   }
 }
 
-function initProgram(connection: Connection, wallet: Wallet) {
+function loadProgram(connection: Connection, wallet: Wallet) {
   provider = new Provider(connection, wallet, Provider.defaultOptions())
   setProvider(provider)
 
