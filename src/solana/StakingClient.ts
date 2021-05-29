@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { Wallet } from '@project-serum/anchor/src/provider'
 import { Program, Provider, setProvider, web3 } from '@project-serum/anchor'
 import BN from 'bn.js'
@@ -175,7 +175,6 @@ export default class StakingClient {
         ' - amount: ',
         await Utils.tokenBalance(connection, memberBalances.vaultPw)
       )
-
     } catch (e) {
       console.log('Stake Error: ', e)
     }
@@ -198,7 +197,7 @@ export default class StakingClient {
   public static async getMemberInfo(connection: Connection, wallet: Wallet) {
     loadProgram(connection, wallet)
     const memberAssociatedAccount = await program.account.member.associated(wallet.publicKey)
-    const vaultStakePubKey = memberAssociatedAccount.balances.vaultStake;
+    const vaultStakePubKey = memberAssociatedAccount.balances.vaultStake
     const stakeAmount = (await provider.connection.getTokenAccountBalance(vaultStakePubKey)).value
     const memberInfo: MemberInfo = {
       stakeAmount,
