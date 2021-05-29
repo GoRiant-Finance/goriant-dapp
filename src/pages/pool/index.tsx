@@ -23,8 +23,9 @@ import StakingClient from "../../solana/StakingClient";
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const { wallet, connected } = useWallet()
   const connection = useConnection()
-  const [showRiant, setShowRiant] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  const [showRiant, setShowRiant] = useState(false);
   const [showRay, setShowRay] = useState(false);
   const [coinTypes, setCoinTypes] = useState(['withdraw', 'deposit']);
   const [riantPick, setRiantPick] = useState('deposit');
@@ -39,7 +40,9 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
         setBalanceSol(balanceSol)
       }
     }
-
+    setInterval(() => {
+      setLoading(false);
+    }, 2000);
     fetchMyAPI();
 
 
@@ -263,7 +266,7 @@ const ArrowLeftIcon: React.FC = () => (
   return (
     <Page>
       <Container>
-        {false && (
+        {loading && (
           <LoadingOverlay>
             <LoadingOverlayInner>
               <LoadingSpinner />
