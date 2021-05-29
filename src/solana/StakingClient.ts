@@ -45,7 +45,7 @@ export default class StakingClient {
     console.log('balances.vaultPw: ', balances.vaultPw.toString())
 
     try {
-      const tx = await program.rpc.createMember(memberNonce, {
+      const createMemberTx = await program.rpc.createMember(memberNonce, {
         accounts: {
           stakingPool: statePubKey,
           member,
@@ -56,7 +56,7 @@ export default class StakingClient {
           systemProgram: web3.SystemProgram.programId
         }
       })
-      console.log('tx: ', tx)
+      console.log('tx: ', createMemberTx)
       const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
       console.log('memberAccount.owner: ', memberAccount.authority.toString())
       console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
@@ -66,6 +66,19 @@ export default class StakingClient {
     } catch (e) {
       console.log('Create member Error: ', e)
     }
+  }
+
+  public static async checkMemberExist(connection: Connection, wallet: Wallet) {
+    loadProgram(connection, wallet)
+    try {
+      const memberAssociatedAccount = await program.account.member.associated(wallet.publicKey)
+      if (memberAssociatedAccount == null || typeof memberAssociatedAccount === 'undefined') {
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+    return true
   }
 
   public static async deposit(connection: Connection, wallet: Wallet) {
