@@ -21,3 +21,31 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.option-button {
+    display: inline-block;
+    position: relative;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+.option-button .option-menu {
+    display: none;
+}
+
+.option-button:hover .option-menu {
+    display: block;
+    position: absolute;
+    list-style-type: none;
+    padding: 10px;
+    font-size: 15px;
+    left: -150px;
+    width: 200px;;
+    background-color: #1C1C28;
+    box-shadow: 30px 12px 20px rgb(0, 0, 0 , 0.4);
+}
+
+.option-menu li:hover {
+    color: #06c270;
+    font-weight: bold;
+}
