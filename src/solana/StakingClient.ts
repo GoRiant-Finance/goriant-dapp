@@ -6,6 +6,8 @@ import BN from 'bn.js'
 import { TokenInstructions } from '@project-serum/serum'
 import config from './staking-config.json'
 import Utils from './utils'
+import { StakingPoolInfo } from '../models/stakingPool'
+import { MemberInfo } from '../models/memberInfo'
 
 const STAKING_PROGRAM_ID = config.program['staking.programId']
 
@@ -177,6 +179,33 @@ export default class StakingClient {
     } catch (e) {
       console.log('Stake Error: ', e)
     }
+  }
+
+  public static async getStakingPoolViewInfo(connection: Connection, wallet: Wallet) {
+    initProgram(connection, wallet)
+    const state = (await program.state()) as any
+    const totalStaked = (await provider.connection.getTokenSupply(state.poolMint)).value
+    const stakingPool: StakingPoolInfo = {
+      totalStaked,
+      accumulateTokenRewardPerShare: state.accTokenPerShare,
+      lastUpdateBlock: state.lastRewardBlock,
+      rewardPerBlock: state.rewardPerBlock,
+      precisionFactor: state.precisionFactor
+    }
+    return stakingPool
+  }
+
+  public static async getMemberInfo(connection: Connection, wallet: Wallet) {
+    initProgram(connection, wallet)
+    const memberAssociatedAccount = await program.account.member.associated(wallet.publicKey)
+    const vaultStakePubKey = memberAssociatedAccount.balances.vaultStake;
+    const stakeAmount = (await provider.connection.getTokenAccountBalance(vaultStakePubKey)).value
+    const memberInfo: MemberInfo = {
+      stakeAmount,
+      rewardDebt: memberAssociatedAccount.rewardDebt,
+      metaData: memberAssociatedAccount.metaData
+    }
+    return memberInfo
   }
 }
 
