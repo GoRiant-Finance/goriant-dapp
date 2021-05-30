@@ -103,8 +103,6 @@ export default class StakingClient {
       console.log('load success')
       console.log('memberAccount.owner: ', memberAccount1.authority.toString())
       console.log('memberAccount.metadata: ', memberAccount1.metadata.toString())
-      console.log('memberAccount.rewardsCursor: ', memberAccount1.rewardsCursor.toString())
-      console.log('memberAccount.lastStakeTs: ', memberAccount1.lastStakeTs.toString())
       setUserRiant(true)
       notify({
         message: "Create User",
@@ -172,8 +170,6 @@ export default class StakingClient {
 
       console.log('memberAccount.owner: ', memberAccount.authority.toString())
       console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
-      console.log('memberAccount.rewardsCursor: ', memberAccount.rewardsCursor.toString())
-      console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
       console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
       notify({
         message: "Deposit Amount",
