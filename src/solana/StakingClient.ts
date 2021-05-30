@@ -97,24 +97,17 @@ export default class StakingClient {
         signers: tx.signers,
         instructions: [tx.tx]
       })
-      console.log('tx: ', createMemberTx)
-      console.log('pubkey: ', provider.wallet.publicKey)
-      const memberAccount1 = await program.account.member.associated(provider.wallet.publicKey)
-      console.log('load success')
-      console.log('memberAccount.owner: ', memberAccount1.authority.toString())
-      console.log('memberAccount.metadata: ', memberAccount1.metadata.toString())
       setUserRiant(true)
       notify({
-        message: "Create User",
-        description: "Created user successfull ",
-      });
-
+        message: 'Create User',
+        description: 'Created user successful '
+      })
     } catch (e) {
       setUserRiant(false)
       notify({
-        message: "Create User",
-        description: "Created user fail ",
-      });
+        message: 'Create User',
+        description: 'Created user fail '
+      })
       console.log('Create member Error: ', e)
     }
   }
@@ -167,14 +160,10 @@ export default class StakingClient {
         }
       })
       console.log('tx: ', tx)
-
-      console.log('memberAccount.owner: ', memberAccount.authority.toString())
-      console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
-      console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
       notify({
-        message: "Deposit Amount",
-        description: "Deposit Amount successfull ",
-      });
+        message: 'Deposit Amount',
+        description: 'Deposit Amount successful '
+      })
     } catch (e) {
       console.log('Stake Error: ', e)
     }
@@ -272,19 +261,9 @@ export default class StakingClient {
   public static async pendingReward(connection: Connection, wallet: Wallet) {
     loadProgram(connection, wallet)
 
-    const currentBlock = Math.floor(Date.now().valueOf() / 1000)
+    const currentTimestamp = Math.floor(Date.now().valueOf() / 1000)
     const state = (await program.state()) as any
-    const {
-      precisionFactor,
-      lastRewardBlock,
-      rewardPerBlock,
-      poolMint,
-      memberRewardDebt,
-      accTokenPerShare,
-      startBlock,
-      bonusEndBlock
-    } = state
-    const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
+    const { precisionFactor, lastRewardBlock, rewardPerBlock, poolMint, accTokenPerShare, bonusEndBlock } = state
     const account = await program.account.member.associated(provider.wallet.publicKey)
 
     const tokenSupplyOfPoolMint = await provider.connection.getTokenSupply(poolMint)
@@ -294,7 +273,7 @@ export default class StakingClient {
     let totalStaking = new BN(tokenSupplyOfPoolMint.value.amount)
     if (totalStaking.eq(new BN('0'))) totalStaking = new BN(1)
 
-    const multiplier = getMultiplier(new BN(lastRewardBlock), new BN(currentBlock), bonusEndBlock) as BN
+    const multiplier = Utils.getMultiplier(new BN(lastRewardBlock), new BN(currentTimestamp), bonusEndBlock) as BN
     const tokenReward = multiplier.mul(rewardPerBlock)
     const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaking))
     const pendingReward = stakingToken
@@ -309,10 +288,9 @@ export default class StakingClient {
     loadProgram(connection, wallet)
     const currentBlock = Math.floor(Date.now().valueOf() / 1000)
     const state = (await program.state()) as any
-    memberAccount = await program.account.member.associated(provider.wallet.publicKey)
+    const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
     const totalStaked = new BN((await provider.connection.getTokenSupply(state.poolMint)).value.amount)
     const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
     return {
       stakedAmount: memberStaked.toNumber() / 1_000_000_000,
