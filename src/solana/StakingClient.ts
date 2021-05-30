@@ -25,24 +25,24 @@ export default class StakingClient {
     loadProgram(connection, wallet)
 
     const state = (await program.state()) as any
-    const statePubKey = state.address()
+    const stateFunction = program.state as any
+    const statePubKey = await stateFunction.address()
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
 
-    console.log('member: ', member.toString())
+    // console.log('member: ', member.toString())
 
     const [memberImprint, memberNonce] = await web3.PublicKey.findProgramAddress(
       [statePubKey.toBuffer(), member.toBuffer()],
       program.programId
     )
-    const res = await Utils.createBalanceSandbox(provider, state, memberImprint)
-    const { tx, balances } = res
+
+    const { tx, balances } = await Utils.createBalanceSandbox(provider, state, memberImprint)
+
+    console.log('tx: ', tx)
 
     const txSigns = await provider.send(tx.tx, tx.signers)
 
     console.log('create balance sandbox tx: ', txSigns)
-    console.log('balances.spt: ', balances.spt.toString())
-    console.log('balances.vaultStake: ', balances.vaultStake.toString())
-    console.log('balances.vaultPw: ', balances.vaultPw.toString())
 
     try {
       const createMemberTx = await program.rpc.createMember(memberNonce, {
@@ -86,7 +86,8 @@ export default class StakingClient {
 
     const god = new web3.PublicKey(config.program.vault)
     const state = (await program.state()) as any
-    const statePubKey = state.address()
+    const stateFunction = program.state as any
+    const statePubKey = await stateFunction.address()
 
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
     const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
@@ -121,7 +122,6 @@ export default class StakingClient {
       console.log('memberAccount.rewardsCursor: ', memberAccount.rewardsCursor.toString())
       console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
       console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
-
     } catch (e) {
       console.log('Stake Error: ', e)
     }
@@ -132,7 +132,8 @@ export default class StakingClient {
 
     const tokenAccount = new web3.PublicKey(config.program.vault)
     const state = (await program.state()) as any
-    const statePubKey = state.address()
+    const stateFunction = program.state as any
+    const statePubKey = await stateFunction.address()
 
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
     const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
