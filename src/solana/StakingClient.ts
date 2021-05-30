@@ -16,6 +16,16 @@ let program: Program
 let memberAccount: any
 let poolMintPubKey: PublicKey
 
+function getMultiplier(from: BN, to: BN, bonusEndBlock: BN) {
+  if (to <= bonusEndBlock) {
+    return to.sub(from)
+  }
+  if (from >= bonusEndBlock) {
+    return 0
+  }
+  return bonusEndBlock.sub(from)
+}
+
 export default class StakingClient {
   public static async getBalance(connection: Connection, wallet: PublicKey) {
     const balance = await connection.getBalance(wallet)
@@ -227,6 +237,42 @@ export default class StakingClient {
       metaData: memberAccount.metaData
     }
     return memberInfo
+  }
+
+  public static async pendingReward(connection: Connection, wallet: Wallet) {
+    loadProgram(connection, wallet)
+
+    const currentBlock = Math.floor(Date.now().valueOf() / 1000)
+    const state = (await program.state()) as any
+    const {
+      precisionFactor,
+      lastRewardBlock,
+      rewardPerBlock,
+      poolMint,
+      memberRewardDebt,
+      accTokenPerShare,
+      startBlock,
+      bonusEndBlock
+    } = state
+    const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
+    const account = await program.account.member.associated(provider.wallet.publicKey)
+
+    const tokenSupplyOfPoolMint = await provider.connection.getTokenSupply(poolMint)
+    const memberTokenBalance = await provider.connection.getTokenAccountBalance(account.balances.vaultStake)
+    const stakingToken = new BN(memberTokenBalance.value.amount)
+
+    let totalStaking = new BN(tokenSupplyOfPoolMint.value.amount)
+    if (totalStaking.eq(new BN('0'))) totalStaking = new BN(1)
+
+    const multiplier = getMultiplier(new BN(lastRewardBlock), new BN(currentBlock), bonusEndBlock) as BN
+    const tokenReward = multiplier.mul(rewardPerBlock)
+    const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaking))
+    const pendingReward = stakingToken
+      .mul(newAccTokenPerShare)
+      .div(precisionFactor)
+      .sub(account.rewardDebt)
+
+    return pendingReward.toString()
   }
 }
 
