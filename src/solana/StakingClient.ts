@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
 import { Wallet } from '@project-serum/anchor/src/provider'
 import { Program, Provider, setProvider, web3 } from '@project-serum/anchor'
