@@ -270,8 +270,8 @@ export default class StakingClient {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
     return {
-      stakedAmount: memberStaked.toNumber(),
-      pendingRewardAmount
+      stakedAmount: memberStaked.toNumber() / 1_000_000_000,
+      pendingRewardAmount: pendingRewardAmount / 1_000_000_000
     }
   }
 }
