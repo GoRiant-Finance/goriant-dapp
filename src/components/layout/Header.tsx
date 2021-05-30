@@ -1,13 +1,14 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from '../../utils/styled'
 import Container from './Container'
 import { ConnectStatus } from '../connectStatus'
 import './../../ant-custom.less'
-
-interface HeaderProps {
-  title: string
-}
+import { Menu } from 'antd';
+import {
+  BrowserRouter as Router,
+  Link
+} from 'react-router-dom';
 
 const Wrapper = styled('header')`
   padding: 1.5rem 1.5rem;
@@ -213,64 +214,63 @@ const Coin: React.FC = () => (
   </svg>
 )
 
-const CoreIcon: React.FC = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M4 8.63107C4 7.93295 4.36402 7.28536 4.96042 6.92248L10.9604 3.2718C11.599 2.88324 12.401 2.88324 13.0396 3.2718L19.0396 6.92248C19.636 7.28536 20 7.93295 20 8.63107V15.3689C20 16.067 19.636 16.7146 19.0396 17.0775L13.0396 20.7282C12.401 21.1168 11.599 21.1168 10.9604 20.7282L4.96042 17.0775C4.36402 16.7146 4 16.067 4 15.3689L4 8.63107Z"
-      stroke="white"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-    <path
-      d="M7.04943 9.8912C7.21941 12.7879 9.74773 16.151 13.3171 16.3347C15.0027 16.4195 16.3554 15.5716 16.9361 14.0173C17.0353 13.7559 17.0565 13.4945 17.014 13.226C16.9432 12.7526 16.5324 12.3499 16.0933 12.3075C15.6188 12.258 15.5055 12.364 15.2364 12.9787C14.8327 13.876 14.1387 14.3988 13.133 14.4271C11.0792 14.4907 8.98994 12.5477 8.88371 10.4847C8.86246 10.0184 8.78456 9.58033 8.40921 9.26239C8.12592 9.02218 7.77889 8.90207 7.42479 9.06457C7.07068 9.21294 7.02819 9.545 7.04943 9.8912Z"
-      fill="#F9F9FA"
-    />
-    <path
-      d="M14.9106 9.70043C14.9106 10.3363 15.4135 10.8662 16.0084 10.8591C16.3979 10.8521 16.6599 10.5906 16.6599 10.1879C16.667 9.60152 16.0721 8.95152 15.5339 8.95858C15.1444 8.96565 14.9106 9.24119 14.9106 9.70043Z"
-      fill="#F9F9FA"
-    />
-  </svg>
-)
-
 const FaBarIcon: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
   </svg>
 )
 
-// const [color, setColor] = useState(false);;
-const handleBoxClick = () => {
-  // setColor(color => !color);
-}
+function Header() {
+  const [isDropMenu, setDropMenu] = useState(false);
+  const handleDropMenuClick = () => {
+    setDropMenu(isDropMenu => !isDropMenu);
+  }
 
-const Header: React.FC<HeaderProps> = ({ title }) => (
-  <Wrapper>
-    <HeaderInner>
-      <Logo />
-      <Title>{title}</Title>
-      <HeaderNav>
-        <HeaderNavLink exact to="/pool" activeClassName="is-active">
-          POOL
+  return (
+    <Wrapper>
+      <HeaderInner>
+        <Logo />
+        <Title>GORIANT</Title>
+        <HeaderNav>
+          <HeaderNavLink exact to="/pool" activeClassName="is-active">
+            POOL
         </HeaderNavLink>
-        <HeaderNavLink to="/voting" activeClassName="is-active">
-          VOTING
+          <HeaderNavLink to="/voting" activeClassName="is-active">
+            VOTING
         </HeaderNavLink>
-      </HeaderNav>
-      <Balance>
-        <BalanceImg>
-          <Coin />
-        </BalanceImg>
-        <BalanceNum>$323.31</BalanceNum>
-      </Balance>
-      <div className="userInfo">
-        <UserId style={{ paddingRight: 30 }}>
-          <ConnectStatus />
-        </UserId>
-      </div>
-      <FaBar onClick={handleBoxClick}>
-        <FaBarIcon></FaBarIcon>
-      </FaBar>
-    </HeaderInner>
-  </Wrapper>
-)
+        </HeaderNav>
+        <Balance>
+          <BalanceImg>
+            <Coin />
+          </BalanceImg>
+          <BalanceNum>$323.31</BalanceNum>
+        </Balance>
+        <div className="userInfo">
+          <UserId style={{ paddingRight: 30 }}>
+            <ConnectStatus />
+          </UserId>
+        </div>
+        <FaBar onClick={handleDropMenuClick}>
+          <FaBarIcon></FaBarIcon>
+          {isDropMenu && (
+            <Menu
+              mode="inline"
+              theme="dark"
+            >
+              <Menu.Item key="1">
+                <Link to="/pool"></Link>Pool
+              </Menu.Item>
+              <Menu.Item key="2">
+                <Link to="/voting"></Link>Vote
+              </Menu.Item>
+              <Menu.Item key="3">
+                Connect Wallet
+              </Menu.Item>
+            </Menu>
+          )}
+        </FaBar>
+      </HeaderInner>
+    </Wrapper>
+  );
+}
 
 export default Header

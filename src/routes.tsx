@@ -30,7 +30,7 @@ const Routes: React.FC = () => (
         <WalletProvider>
           <AccountsProvider>
             <MarketProvider>
-              <Header title="GORIANT" />
+              <Header/>
               <Switch>
                 <Route exact path="/">
                   <Redirect to="/pool" />
