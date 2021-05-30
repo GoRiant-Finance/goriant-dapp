@@ -16,7 +16,6 @@ export default class Utils {
     const tx0 = new web3.Transaction()
     tx0.add(...createSptIx, ...createVaultStakeIx, ...createVaultPwIx)
     const signers0 = [spt, vaultStake, vaultPw]
-
     const tx = { tx: tx0, signers: signers0 }
     const balances = {
       spt: spt.publicKey,
