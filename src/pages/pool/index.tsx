@@ -34,15 +34,16 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     async function fetchMyAPI() {
       const info = await StakingClient.getStakingPoolInfo(connection, wallet as any)
       setTotalStakedRiant(info.totalStaked)
-      // if (wallet && wallet.publicKey) {
-      //   const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
-      //   if (!isExist) {
-      //     await StakingClient.createMember(connection, wallet as any)
-      //   }
-      //   const memberInfo = await StakingClient.getMemberInfo(connection, wallet as any)
-      //   setTotalStakedRiant(memberInfo.stakeAmount)
-      //   // setBalanceSol(info)
-      // }
+      if (wallet && wallet.publicKey) {
+        const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
+        if (!isExist) {
+          await StakingClient.createMember(connection, wallet as any)
+        }
+        const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+        console.log('member balances: ', memberRiantBalances)
+        // setTotalStakedRiant(memberInfo.stakeAmount)
+        // setBalanceSol(info)
+      }
     }
     setInterval(() => {
       setLoading(false)
