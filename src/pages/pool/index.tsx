@@ -27,6 +27,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [showRay, setShowRay] = useState(false)
   const [coinTypes, setCoinTypes] = useState(['withdraw', 'deposit'])
   const [riantPick, setRiantPick] = useState('deposit')
+  const [memberRiant, setMemberRiant] = useState(false)
   const [totalStakedRiant, setTotalStakedRiant] = useState(0)
   const [balanceSol, setBalanceSol] = useState(0)
 
@@ -34,19 +35,16 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     async function fetchMyAPI() {
       const info = await StakingClient.getStakingPoolInfo(connection, wallet as any)
       setTotalStakedRiant(info.totalStaked)
-      // if (wallet && wallet.publicKey) {
-      //   const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
-      //   if (!isExist) {
-      //     await StakingClient.createMember(connection, wallet as any)
-      //   }
-      //   const memberInfo = await StakingClient.getMemberInfo(connection, wallet as any)
-      //   setTotalStakedRiant(memberInfo.stakeAmount)
-      //   // setBalanceSol(info)
-      // }
+      if (wallet && wallet.publicKey) {
+        const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
+        setMemberRiant(isExist as boolean)
+        //const memberInfo = await StakingClient.getMemberInfo(connection, wallet as any)
+        // setBalanceSol(info)
+      }
     }
     setInterval(() => {
       setLoading(false)
-    }, 10000)
+    }, 2000)
     fetchMyAPI()
   })
 
@@ -69,6 +67,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     )
   })
 
+
   const hideComponent = (name: string) => {
     switch (name) {
       case 'showRiant':
@@ -80,6 +79,14 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       default:
     }
   }
+
+  const createMember = async () => {
+    await StakingClient.createMember(connection, wallet as any)
+
+  }
+
+
+
 
   const PageContent = styled('article')`
     max-width: ${props => props.theme.widths.lg};
@@ -342,9 +349,15 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                     <div className="text">Staked</div>
                     <div className="number">42.00</div>
                   </Col>
-                  <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
-                    <a onClick={() => hideComponent('showRiant')}>Detail</a>
-                  </Col>
+                  {!memberRiant ? (
+                    <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
+                      <div className="button" onClick={() => createMember()}>Enable</div>
+                    </Col>
+                  ) : (
+                    <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
+                      <a onClick={() => hideComponent('showRiant')}>Detail</a>
+                    </Col>
+                  )}
                 </Row>
                 {showRiant && (
                   <Row className="feature-container">
