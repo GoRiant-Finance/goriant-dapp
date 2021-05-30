@@ -1,7 +1,7 @@
 import { TokenAmount, PublicKey } from "@solana/web3.js";
 
 export interface MemberInfo {
-  stakeAmount: TokenAmount
+  stakeAmount: any
   rewardDebt: number
   metaData: PublicKey
 }

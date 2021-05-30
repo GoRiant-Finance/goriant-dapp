@@ -32,14 +32,21 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
 
   useEffect(() => {
     async function fetchMyAPI() {
-      if (wallet && wallet.publicKey) {
-        const info = await StakingClient.getStakingPoolInfo(connection, wallet as any)
-        setTotalStakedRiant(info.totalStaked)
-      }
+      const info = await StakingClient.getStakingPoolInfo(connection, wallet as any)
+      setTotalStakedRiant(info.totalStaked)
+      // if (wallet && wallet.publicKey) {
+      //   const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
+      //   if (!isExist) {
+      //     await StakingClient.createMember(connection, wallet as any)
+      //   }
+      //   const memberInfo = await StakingClient.getMemberInfo(connection, wallet as any)
+      //   setTotalStakedRiant(memberInfo.stakeAmount)
+      //   // setBalanceSol(info)
+      // }
     }
     setInterval(() => {
       setLoading(false)
-    }, 2000)
+    }, 10000)
     fetchMyAPI()
   })
 

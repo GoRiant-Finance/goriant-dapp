@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js'
 import { Wallet } from '@project-serum/anchor/src/provider'
 import { Program, Provider, setProvider, web3 } from '@project-serum/anchor'
 import BN from 'bn.js'
@@ -13,6 +13,8 @@ const STAKING_PROGRAM_ID = config.program['staking.programId']
 
 let provider: Provider
 let program: Program
+let memberAccount: any
+let poolMintPubKey: PublicKey
 
 export default class StakingClient {
   public static async getBalance(connection: Connection, wallet: PublicKey) {
@@ -29,20 +31,12 @@ export default class StakingClient {
     const statePubKey = await stateFunction.address()
     const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
 
-    // console.log('member: ', member.toString())
-
     const [memberImprint, memberNonce] = await web3.PublicKey.findProgramAddress(
       [statePubKey.toBuffer(), member.toBuffer()],
       program.programId
     )
 
     const { tx, balances } = await Utils.createBalanceSandbox(provider, state, memberImprint)
-
-    console.log('tx: ', tx)
-
-    const txSigns = await provider.send(tx.tx, tx.signers)
-
-    console.log('create balance sandbox tx: ', txSigns)
 
     try {
       const createMemberTx = await program.rpc.createMember(memberNonce, {
@@ -54,15 +48,19 @@ export default class StakingClient {
           memberImprint,
           rent: web3.SYSVAR_RENT_PUBKEY,
           systemProgram: web3.SystemProgram.programId
-        }
+        },
+        signers: tx.signers,
+        instructions: [tx.tx]
       })
       console.log('tx: ', createMemberTx)
-      const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
-      console.log('memberAccount.owner: ', memberAccount.authority.toString())
-      console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
-      console.log('memberAccount.rewardsCursor: ', memberAccount.rewardsCursor.toString())
-      console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
-      console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
+      console.log('pubkey: ', provider.wallet.publicKey)
+      const memberAccount1 = await program.account.member.associated(provider.wallet.publicKey)
+      console.log('load success')
+      console.log('memberAccount.owner: ', memberAccount1.authority.toString())
+      console.log('memberAccount.metadata: ', memberAccount1.metadata.toString())
+      console.log('memberAccount.rewardsCursor: ', memberAccount1.rewardsCursor.toString())
+      console.log('memberAccount.lastStakeTs: ', memberAccount1.lastStakeTs.toString())
+      console.log('memberAccount.nonce: ', memberAccount1.nonce.toString())
     } catch (e) {
       console.log('Create member Error: ', e)
     }
@@ -191,31 +189,42 @@ export default class StakingClient {
     }
   }
 
-  public static async getStakingPoolInfo(connection: Connection, wallet: Wallet) {
-    loadProgram(connection, wallet)
+  public static async getStakingPoolInfo(connection: Connection, wallet?: Wallet) {
+    let dynamicProvider: Provider
+    if (wallet == null || typeof wallet === 'undefined') {
+      dynamicProvider = loadProgramWithOutWallet(connection)
+    } else {
+      loadProgram(connection, wallet)
+      dynamicProvider = provider
+    }
 
-    const state = (await program.state()) as any
-    const poolMint = await provider.connection.getTokenSupply(state.poolMint)
+    if (poolMintPubKey == null) {
+      const state = (await program.state()) as any
+      poolMintPubKey = state.poolMint
+    }
+    const poolMint = await dynamicProvider.connection.getTokenSupply(poolMintPubKey)
     const totalStaked = poolMint.value
     const stakingPool: StakingPoolInfo = {
       totalStaked: totalStaked.uiAmount,
-      accumulateTokenRewardPerShare: state.accTokenPerShare,
-      lastUpdateBlock: state.lastRewardBlock,
-      rewardPerBlock: state.rewardPerBlock,
-      precisionFactor: state.precisionFactor
+      accumulateTokenRewardPerShare: 0,
+      lastUpdateBlock: 0,
+      rewardPerBlock: 0,
+      precisionFactor: 0
     }
     return stakingPool
   }
 
   public static async getMemberInfo(connection: Connection, wallet: Wallet) {
     loadProgram(connection, wallet)
-    const memberAssociatedAccount = await program.account.member.associated(wallet.publicKey)
-    const vaultStakePubKey = memberAssociatedAccount.balances.vaultStake
-    const stakeAmount = (await provider.connection.getTokenAccountBalance(vaultStakePubKey)).value
+    if (memberAccount == null) {
+      memberAccount = await program.account.member.associated(wallet.publicKey)
+    }
+    const vaultStakePubKey = memberAccount.balances.vaultStake
+    // const stakeAmount = (await provider.connection.getTokenAccountBalance(vaultStakePubKey)).value
     const memberInfo: MemberInfo = {
-      stakeAmount,
-      rewardDebt: memberAssociatedAccount.rewardDebt,
-      metaData: memberAssociatedAccount.metaData
+      stakeAmount: 0,
+      rewardDebt: memberAccount.rewardDebt,
+      metaData: memberAccount.metaData
     }
     return memberInfo
   }
@@ -227,4 +236,22 @@ function loadProgram(connection: Connection, wallet: Wallet) {
 
   const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
   program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
+}
+
+function loadProgramWithOutWallet(connection: Connection) {
+  const dummyWallet: Wallet = {
+    signTransaction(tx: Transaction): Promise<Transaction> {
+      return new Promise<Transaction>(resolve => resolve(tx))
+    },
+    signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
+      return new Promise<Transaction[]>(resolve => resolve(txs))
+    },
+    publicKey: PublicKey.default
+  }
+  const dummyProvider = new Provider(connection, dummyWallet, Provider.defaultOptions())
+  setProvider(dummyProvider)
+
+  const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
+  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
+  return dummyProvider
 }
