@@ -38,7 +38,9 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       if (wallet && wallet.publicKey) {
         const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
         setMemberRiant(isExist as boolean)
-        //const memberInfo = await StakingClient.getMemberInfo(connection, wallet as any)
+        // const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+        // console.log('member balances: ', memberRiantBalances)
+        // setTotalStakedRiant(memberInfo.stakeAmount)
         // setBalanceSol(info)
       }
     }

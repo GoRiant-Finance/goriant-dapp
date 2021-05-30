@@ -224,21 +224,6 @@ export default class StakingClient {
     return stakingPool
   }
 
-  public static async getMemberInfo(connection: Connection, wallet: Wallet) {
-    loadProgram(connection, wallet)
-    if (memberAccount == null) {
-      memberAccount = await program.account.member.associated(wallet.publicKey)
-    }
-    const vaultStakePubKey = memberAccount.balances.vaultStake
-    // const stakeAmount = (await provider.connection.getTokenAccountBalance(vaultStakePubKey)).value
-    const memberInfo: MemberInfo = {
-      stakeAmount: 0,
-      rewardDebt: memberAccount.rewardDebt,
-      metaData: memberAccount.metaData
-    }
-    return memberInfo
-  }
-
   public static async pendingReward(connection: Connection, wallet: Wallet) {
     loadProgram(connection, wallet)
 
@@ -274,6 +259,39 @@ export default class StakingClient {
 
     return pendingReward.toString()
   }
+
+  public static async getMemberRiantBalances(connection: Connection, wallet: Wallet) {
+    loadProgram(connection, wallet)
+    const currentBlock = Math.floor(Date.now().valueOf() / 1000)
+    const state = (await program.state()) as any
+    memberAccount = await program.account.member.associated(provider.wallet.publicKey)
+    const totalStaked = new BN((await provider.connection.getTokenSupply(state.poolMint)).value.amount)
+    const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
+    return {
+      stakedAmount: memberStaked.toNumber() / 1_000_000_000,
+      pendingRewardAmount: pendingRewardAmount / 1_000_000_000
+    }
+  }
+}
+
+function calculatePendingReward(totalStaked: BN, state: any, memberStaked: BN, memberDebt: BN, time: number) {
+  const { precisionFactor, lastRewardBlock, rewardPerBlock, accTokenPerShare, bonusEndBlock } = state
+
+  if (totalStaked.eq(new BN('0'))) {
+    return 0
+  }
+
+  const multiplier = getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock) as BN
+  const tokenReward = multiplier.mul(rewardPerBlock)
+  const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaked))
+  const pendingReward = memberStaked
+    .mul(newAccTokenPerShare)
+    .div(precisionFactor)
+    .sub(memberDebt)
+
+  return pendingReward.toNumber()
 }
 
 function loadProgram(connection: Connection, wallet: Wallet) {
