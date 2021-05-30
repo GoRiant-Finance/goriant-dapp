@@ -102,7 +102,7 @@ export default class StakingClient {
     return true
   }
 
-  public static async deposit(connection: Connection, wallet: Wallet, amount: number) {
+  public static async deposit(connection: Connection, wallet: Wallet) {
     loadProgram(connection, wallet)
 
     const god = new web3.PublicKey(config.program.vault)
@@ -117,7 +117,7 @@ export default class StakingClient {
       [statePubKey.toBuffer(), member.toBuffer()],
       program.programId
     )
-    const depositAmount = new BN(amount)
+    const depositAmount = new BN(100000)
     try {
       const tx = await program.rpc.depositAndState(depositAmount, {
         accounts: {
@@ -143,10 +143,6 @@ export default class StakingClient {
       console.log('memberAccount.rewardsCursor: ', memberAccount.rewardsCursor.toString())
       console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
       console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
-      notify({
-        message: "Deposit Amount",
-        description: "Deposit Amount successfull ",
-      });
     } catch (e) {
       console.log('Stake Error: ', e)
     }
