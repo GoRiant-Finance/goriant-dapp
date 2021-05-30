@@ -1,6 +1,7 @@
 import { createTokenAccountInstrs } from '@project-serum/common'
 import { Provider, web3 } from '@project-serum/anchor'
 import { Connection, PublicKey, Transaction } from '@solana/web3.js'
+import BN from "bn.js";
 
 export default class Utils {
   public static async createBalanceSandbox(provider: Provider, programState: any, registrySigner: PublicKey) {
@@ -29,6 +30,16 @@ export default class Utils {
 
   public static async tokenBalance(connection: Connection, wallet: PublicKey) {
     return (await connection.getTokenAccountBalance(wallet)).value
+  }
+
+  public static getMultiplier(from: BN, to: BN, bonusEndBlock: BN) {
+    if (to <= bonusEndBlock) {
+      return to.sub(from)
+    }
+    if (from >= bonusEndBlock) {
+      return 0
+    }
+    return bonusEndBlock.sub(from)
   }
 }
 
