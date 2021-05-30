@@ -128,19 +128,17 @@ export default class StakingClient {
   public static async deposit(connection: Connection, wallet: Wallet, amount: number) {
     loadProgram(connection, wallet)
 
+    const owner = provider.wallet.publicKey
     const god = new web3.PublicKey(config.program.vault)
     const state = (await program.state()) as any
     const stateFunction = program.state as any
     const statePubKey = await stateFunction.address()
 
-    const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
-    const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
+    const member = await program.account.member.associatedAddress(owner)
+    const memberAccount = await program.account.member.associated(owner)
     const { balances } = memberAccount
-    const [memberImprint, memberNonce] = await web3.PublicKey.findProgramAddress(
-      [statePubKey.toBuffer(), member.toBuffer()],
-      program.programId
-    )
-    const depositAmount = new BN(amount)
+    const [memberImprint, _nonce] = await web3.PublicKey.findProgramAddress([statePubKey.toBuffer(), member.toBuffer()], program.programId)
+    const depositAmount = new BN(amount * LAMPORTS_PER_SOL)
     try {
       const tx = await program.rpc.deposit(depositAmount, {
         accounts: {
@@ -149,11 +147,11 @@ export default class StakingClient {
           imprint: state.imprint,
           rewardVault: state.rewardVault,
           member,
-          authority: provider.wallet.publicKey,
+          authority: owner,
           balances,
           memberImprint,
           depositor: god,
-          depositorAuthority: provider.wallet.publicKey,
+          depositorAuthority: owner,
           tokenProgram: TokenInstructions.TOKEN_PROGRAM_ID,
           clock: web3.SYSVAR_CLOCK_PUBKEY,
           rent: web3.SYSVAR_RENT_PUBKEY,
