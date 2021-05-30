@@ -1,7 +1,6 @@
-import { Button } from "antd";
-import { ButtonProps } from "antd/lib/button";
+import {ButtonProps} from "antd/lib/button";
 import React from "react";
-import { useWallet } from "../../contexts/wallet";
+import {useWallet} from "../../contexts/wallet";
 
 export interface ConnectButtonProps
   extends ButtonProps,

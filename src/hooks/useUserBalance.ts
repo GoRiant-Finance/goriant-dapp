@@ -1,9 +1,9 @@
-import { PublicKey } from "@solana/web3.js";
-import { useEffect, useMemo, useState } from "react";
-import { useMint } from "../contexts/accounts";
-import { useMarkets } from "../contexts/market";
-import { fromLamports } from "../utils/utils";
-import { useUserAccounts } from "./useUserAccounts";
+import {PublicKey} from "@solana/web3.js";
+import {useEffect, useMemo, useState} from "react";
+import {useMint} from "../contexts/accounts";
+import {useMarkets} from "../contexts/market";
+import {fromLamports} from "../utils/utils";
+import {useUserAccounts} from "./useUserAccounts";
 
 export function useUserBalance(
   mintAddress?: PublicKey | string,
@@ -14,9 +14,9 @@ export function useUserBalance(
       typeof mintAddress === "string" ? mintAddress : mintAddress?.toBase58(),
     [mintAddress]
   );
-  const { userAccounts } = useUserAccounts();
+  const {userAccounts} = useUserAccounts();
   const [balanceInUSD, setBalanceInUSD] = useState(0);
-  const { marketEmitter, midPriceInUSD } = useMarkets();
+  const {marketEmitter, midPriceInUSD} = useMarkets();
 
   const mintInfo = useMint(mint);
   const accounts = useMemo(() => {
@@ -42,6 +42,14 @@ export function useUserBalance(
   ]);
 
   useEffect(() => {
+
+    // const { wallet } = useWallet()
+    // const connection = useConnection()
+    // const client = new StakingClient()
+    // const balance = client.balance(connection, wallet)
+    // console.log('Balance: ', balance)
+
+
     const updateBalance = () => {
       setBalanceInUSD(balance * midPriceInUSD(mint || ""));
     };

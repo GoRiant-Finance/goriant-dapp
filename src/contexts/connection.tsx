@@ -14,6 +14,7 @@ import { setProgramIds } from "../utils/ids";
 import { WalletAdapter } from "./wallet";
 import { cache, getMultipleAccounts, MintParser } from "./accounts";
 import { TokenListProvider, ENV as ChainID, TokenInfo } from "@solana/spl-token-registry";
+import {web3} from "@project-serum/anchor";
 
 export type ENV =
   | "mainnet-beta"
@@ -44,7 +45,7 @@ export const ENDPOINTS = [
   },
 ];
 
-const DEFAULT = ENDPOINTS[0].endpoint;
+const DEFAULT = ENDPOINTS[2].endpoint;
 const DEFAULT_SLIPPAGE = 0.25;
 
 interface ConnectionConfig {
@@ -66,7 +67,7 @@ const ConnectionContext = React.createContext<ConnectionConfig>({
   setSlippage: (val: number) => {},
   connection: new Connection(DEFAULT, "recent"),
   sendConnection: new Connection(DEFAULT, "recent"),
-  env: ENDPOINTS[0].name,
+  env: ENDPOINTS[2].name,
   tokens: [],
   tokenMap: new Map<string, TokenInfo>(),
 });
@@ -74,7 +75,7 @@ const ConnectionContext = React.createContext<ConnectionConfig>({
 export function ConnectionProvider({ children = undefined as any }) {
   const [endpoint, setEndpoint] = useLocalStorageState(
     "connectionEndpts",
-    ENDPOINTS[0].endpoint
+    ENDPOINTS[2].endpoint
   );
 
   const [slippage, setSlippage] = useLocalStorageState(
@@ -90,15 +91,18 @@ export function ConnectionProvider({ children = undefined as any }) {
   ]);
 
   const chain =
-    ENDPOINTS.find((end) => end.endpoint === endpoint) || ENDPOINTS[0];
+    ENDPOINTS.find((end) => end.endpoint === endpoint) || ENDPOINTS[2];
   const env = chain.name;
 
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
   const [tokenMap, setTokenMap] = useState<Map<string, TokenInfo>>(new Map());
+  console.log("Chain: ", chain)
   useEffect(() => {
+    console.log("Test 1")
     cache.clear();
     // fetch token files
     (async () => {
+      console.log('Test check balance FY3QHJREKMii9jgQCTa7bthUHZ1X6Gsbz8PWtcmcUXrd :', await connection.getBalance(new web3.PublicKey('FY3QHJREKMii9jgQCTa7bthUHZ1X6Gsbz8PWtcmcUXrd')))
       const res = await new TokenListProvider().resolve();
       const list = res
         .filterByChainId(chain.chainID)
@@ -130,6 +134,7 @@ export function ConnectionProvider({ children = undefined as any }) {
   // is empty after opening its first time, preventing subsequent subscriptions from receiving responses.
   // This is a hack to prevent the list from every getting empty
   useEffect(() => {
+    console.log('websocket library solana/web3.js')
     const id = connection.onAccountChange(new Account().publicKey, () => {});
     return () => {
       connection.removeAccountChangeListener(id);
@@ -137,6 +142,7 @@ export function ConnectionProvider({ children = undefined as any }) {
   }, [connection]);
 
   useEffect(() => {
+    console.log("Test 2")
     const id = connection.onSlotChange(() => null);
     return () => {
       connection.removeSlotChangeListener(id);
@@ -144,6 +150,7 @@ export function ConnectionProvider({ children = undefined as any }) {
   }, [connection]);
 
   useEffect(() => {
+    console.log("Test 3")
     const id = sendConnection.onAccountChange(
       new Account().publicKey,
       () => {}
@@ -154,6 +161,7 @@ export function ConnectionProvider({ children = undefined as any }) {
   }, [sendConnection]);
 
   useEffect(() => {
+    console.log("Test 4")
     const id = sendConnection.onSlotChange(() => null);
     return () => {
       sendConnection.removeSlotChangeListener(id);
