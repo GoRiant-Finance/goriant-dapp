@@ -66,11 +66,15 @@ export interface WalletAdapter extends EventEmitter {
 const WalletContext = React.createContext<{
   wallet: WalletAdapter | undefined;
   connected: boolean;
+  isUserRiant : boolean;
+  setUserRiant: (test : boolean) => void;
   select: () => void;
   provider: typeof WALLET_PROVIDERS[number] | undefined;
 }>({
   wallet: undefined,
   connected: false,
+  isUserRiant: false,
+  setUserRiant() {},
   select() {},
   provider: undefined,
 });
@@ -101,6 +105,8 @@ export function WalletProvider({ children = null as any }) {
   console.log("Wallet: " + wallet);
 
   const [connected, setConnected] = useState(false);
+  const [isUserRiant, setIsUserRiant] = useState(false);
+
 
   useEffect(() => {
     if (wallet) {
@@ -156,14 +162,17 @@ export function WalletProvider({ children = null as any }) {
 
   const select = useCallback(() => {console.log("test select") ;setIsModalVisible(true); console.log(isModalVisible)}, []);
   const close = useCallback(() => setIsModalVisible(false), []);
-
+  const setUserRiant = (a : boolean) => setIsUserRiant(a);
   console.log(select)
 
   return (
     <WalletContext.Provider
       value={{
+
         wallet,
         connected,
+        isUserRiant,
+        setUserRiant,
         select,
         provider,
       }}
@@ -215,13 +224,17 @@ export function WalletProvider({ children = null as any }) {
 }
 
 export function useWallet() {
-  const { wallet, connected, provider, select } = useContext(WalletContext);
+  const { wallet, connected, isUserRiant, setUserRiant, provider, select } = useContext(WalletContext);
   return {
     wallet,
     connected,
     provider,
     select,
+    isUserRiant,
     publicKey: wallet?.publicKey,
+    setUserRiant(a : boolean){
+      setUserRiant(a);
+    },
     connect() {
       console.log(select());
       wallet ? wallet.connect() : select();

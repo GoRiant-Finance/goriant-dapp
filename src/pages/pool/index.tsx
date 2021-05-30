@@ -1,10 +1,7 @@
 import { Button, Popover, Space, Card, Row, Col } from 'antd'
-import { SettingOutlined } from '@ant-design/icons'
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import React, { useState, useEffect } from 'react'
 import { useWallet } from '../../contexts/wallet'
 import { useConnection } from '../../contexts/connection'
-import { LABELS } from '../../constants'
 
 import Page from '../../components/layout/Page'
 import Container from '../../components/layout/Container'
@@ -19,7 +16,7 @@ import { formatUSD } from '../../utils/utils'
 import StakingClient from '../../solana/StakingClient'
 
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
-  const { wallet, connected } = useWallet()
+  const { wallet, connected, isUserRiant, setUserRiant, select } = useWallet()
   const connection = useConnection()
   const [loading, setLoading] = useState(true)
 
@@ -27,9 +24,11 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [showRay, setShowRay] = useState(false)
   const [coinTypes, setCoinTypes] = useState(['withdraw', 'deposit'])
   const [riantPick, setRiantPick] = useState('deposit')
-  const [memberRiant, setMemberRiant] = useState(false)
   const [totalStakedRiant, setTotalStakedRiant] = useState(0)
   const [balanceSol, setBalanceSol] = useState(0)
+  const [riantStaked, setRiantStaked] = useState(0)
+  const [pendingReward, setPendingReward] = useState(0)
+
 
   useEffect(() => {
     async function fetchMyAPI() {
@@ -37,11 +36,13 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       setTotalStakedRiant(info.totalStaked)
       if (wallet && wallet.publicKey) {
         const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
-        setMemberRiant(isExist as boolean)
-        // const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
-        // console.log('member balances: ', memberRiantBalances)
-        // setTotalStakedRiant(memberInfo.stakeAmount)
-        // setBalanceSol(info)
+        setUserRiant(isExist as boolean)
+      }
+      if(isUserRiant) {
+        const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+        setRiantStaked(memberRiantBalances.stakedAmount)
+        setPendingReward(memberRiantBalances.pendingRewardAmount)
+
       }
     }
     setInterval(() => {
@@ -69,7 +70,6 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     )
   })
 
-
   const hideComponent = (name: string) => {
     switch (name) {
       case 'showRiant':
@@ -83,12 +83,8 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   }
 
   const createMember = async () => {
-    await StakingClient.createMember(connection, wallet as any)
-
+    await StakingClient.createMember(connection, wallet as any, setUserRiant)
   }
-
-
-
 
   const PageContent = styled('article')`
     max-width: ${props => props.theme.widths.lg};
@@ -343,23 +339,31 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                     <div className="percent">131.63%</div>
                     <div className="text">Auto-Compounding</div>
                   </Col>
-                  <Col sm={5} xs={24} md={6} className="total-container">
+                  <Col sm={5} xs={24} md={5} className="total-container">
                     <div className="text">Total Stake</div>
                     <div className="number">{totalStakedRiant}</div>
                   </Col>
-                  <Col sm={5} xs={24} md={4} className="staked-container">
+                  <Col sm={5} xs={24} md={5} className="staked-container">
                     <div className="text">Staked</div>
-                    <div className="number">42.00</div>
+                    <div className="number">{riantStaked}</div>
                   </Col>
-                  {!memberRiant ? (
-                    <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
-                      <div className="button" onClick={() => createMember()}>Enable</div>
-                    </Col>
-                  ) : (
-                    <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
-                      <a onClick={() => hideComponent('showRiant')}>Detail</a>
-                    </Col>
-                  )}
+                  <Col sm={4} xs={24} md={4} className="detail-button">
+                    {!connected ? (
+                      <div className="connect" onClick={() => select()}>
+                        Connect Wallet
+                      </div>
+                    ) : (
+                      [
+                        !isUserRiant ? (
+                          <div className="button" onClick={() => createMember()}>
+                            Enable
+                          </div>
+                        ) : (
+                          <a onClick={() => hideComponent('showRiant')}>Detail</a>
+                        )
+                      ]
+                    )}
+                  </Col>
                 </Row>
                 {showRiant && (
                   <Row className="feature-container">
@@ -381,8 +385,8 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                       </div>
                     </Col>
                     <Col className="staked-container" span={4}>
-                      <div className="text">STAKED</div>
-                      <div className="number">20.195</div>
+                      <div className="text">PENDING REWARD</div>
+                      <div className="number">{pendingReward}</div>
                     </Col>
                     <Col className="withdraw-deposit-container" sm={11} xs={24}>
                       <div>{options}</div>

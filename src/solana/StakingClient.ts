@@ -6,8 +6,11 @@ import BN from 'bn.js'
 import { TokenInstructions } from '@project-serum/serum'
 import config from './staking-config.json'
 import Utils from './utils'
+import { useWallet } from '../contexts/wallet'
+
 import { StakingPoolInfo } from '../models/stakingPool'
 import { MemberInfo } from '../models/memberInfo'
+import { notify } from '../utils/notifications'
 
 const STAKING_PROGRAM_ID = config.program['staking.programId']
 
@@ -33,7 +36,7 @@ export default class StakingClient {
     return 0
   }
 
-  public static async createMember(connection: Connection, wallet: Wallet) {
+  public static async createMember(connection: Connection, wallet: Wallet, setUserRiant : any) {
     loadProgram(connection, wallet)
 
     const state = (await program.state()) as any
@@ -70,8 +73,18 @@ export default class StakingClient {
       console.log('memberAccount.metadata: ', memberAccount1.metadata.toString())
       console.log('memberAccount.rewardsCursor: ', memberAccount1.rewardsCursor.toString())
       console.log('memberAccount.lastStakeTs: ', memberAccount1.lastStakeTs.toString())
-      console.log('memberAccount.nonce: ', memberAccount1.nonce.toString())
+      setUserRiant(true)
+      notify({
+        message: "Create User",
+        description: "Created user successfull ",
+      });
+
     } catch (e) {
+      setUserRiant(false)
+      notify({
+        message: "Create User",
+        description: "Created user fail ",
+      });
       console.log('Create member Error: ', e)
     }
   }
