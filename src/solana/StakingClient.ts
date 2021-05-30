@@ -7,27 +7,58 @@ import BN from 'bn.js'
 import { TokenInstructions } from '@project-serum/serum'
 import config from './staking-config.json'
 import Utils from './utils'
-import { useWallet } from '../contexts/wallet'
 
 import { StakingPoolInfo } from '../models/stakingPool'
-import { MemberInfo } from '../models/memberInfo'
 import { notify } from '../utils/notifications'
 
 const STAKING_PROGRAM_ID = config.program['staking.programId']
 
 let provider: Provider
 let program: Program
-let memberAccount: any
 let poolMintPubKey: PublicKey
 
-function getMultiplier(from: BN, to: BN, bonusEndBlock: BN) {
-  if (to <= bonusEndBlock) {
-    return to.sub(from)
+function loadProgram(connection: Connection, wallet: Wallet) {
+  provider = new Provider(connection, wallet, Provider.defaultOptions())
+  setProvider(provider)
+
+  const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
+  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
+}
+
+function loadProgramWithOutWallet(connection: Connection) {
+  const dummyWallet: Wallet = {
+    signTransaction(tx: Transaction): Promise<Transaction> {
+      return new Promise<Transaction>(resolve => resolve(tx))
+    },
+    signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
+      return new Promise<Transaction[]>(resolve => resolve(txs))
+    },
+    publicKey: PublicKey.default
   }
-  if (from >= bonusEndBlock) {
+  const dummyProvider = new Provider(connection, dummyWallet, Provider.defaultOptions())
+  setProvider(dummyProvider)
+
+  const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
+  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
+  return dummyProvider
+}
+
+function calculatePendingReward(totalStaked: BN, state: any, memberStaked: BN, memberDebt: BN, time: number) {
+  const { precisionFactor, lastRewardBlock, rewardPerBlock, accTokenPerShare, bonusEndBlock } = state
+
+  if (totalStaked.eq(new BN('0'))) {
     return 0
   }
-  return bonusEndBlock.sub(from)
+
+  const multiplier = Utils.getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock) as BN
+  const tokenReward = multiplier.mul(rewardPerBlock)
+  const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaked))
+  const pendingReward = memberStaked
+    .mul(newAccTokenPerShare)
+    .div(precisionFactor)
+    .sub(memberDebt)
+
+  return pendingReward.toNumber()
 }
 
 export default class StakingClient {
@@ -292,48 +323,4 @@ export default class StakingClient {
       pendingRewardAmount: pendingRewardAmount / 1_000_000_000
     }
   }
-}
-
-function calculatePendingReward(totalStaked: BN, state: any, memberStaked: BN, memberDebt: BN, time: number) {
-  const { precisionFactor, lastRewardBlock, rewardPerBlock, accTokenPerShare, bonusEndBlock } = state
-
-  if (totalStaked.eq(new BN('0'))) {
-    return 0
-  }
-
-  const multiplier = getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock) as BN
-  const tokenReward = multiplier.mul(rewardPerBlock)
-  const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaked))
-  const pendingReward = memberStaked
-    .mul(newAccTokenPerShare)
-    .div(precisionFactor)
-    .sub(memberDebt)
-
-  return pendingReward.toNumber()
-}
-
-function loadProgram(connection: Connection, wallet: Wallet) {
-  provider = new Provider(connection, wallet, Provider.defaultOptions())
-  setProvider(provider)
-
-  const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
-  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
-}
-
-function loadProgramWithOutWallet(connection: Connection) {
-  const dummyWallet: Wallet = {
-    signTransaction(tx: Transaction): Promise<Transaction> {
-      return new Promise<Transaction>(resolve => resolve(tx))
-    },
-    signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
-      return new Promise<Transaction[]>(resolve => resolve(txs))
-    },
-    publicKey: PublicKey.default
-  }
-  const dummyProvider = new Provider(connection, dummyWallet, Provider.defaultOptions())
-  setProvider(dummyProvider)
-
-  const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
-  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
-  return dummyProvider
 }
