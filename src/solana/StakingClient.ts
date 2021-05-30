@@ -142,11 +142,12 @@ export default class StakingClient {
     )
     const depositAmount = new BN(amount)
     try {
-      const tx = await program.rpc.depositAndState(depositAmount, {
+      const tx = await program.rpc.deposit(depositAmount, {
         accounts: {
           stakingPool: statePubKey,
           poolMint: state.poolMint,
           imprint: state.imprint,
+          rewardVault: state.rewardVault,
           member,
           authority: provider.wallet.publicKey,
           balances,
