@@ -41,10 +41,10 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
         setUserRiant(isExist as boolean)
       }
       if (isUserRiant) {
-        // const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
-        // setShowRiant(true)
-        // setRiantStaked(memberRiantBalances.stakedAmount)
-        // setPendingReward(memberRiantBalances.pendingRewardAmount)
+        const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+        setShowRiant(true)
+        setRiantStaked(memberRiantBalances.stakedAmount)
+        setPendingReward(memberRiantBalances.pendingRewardAmount)
       }
     }
     setInterval(() => {
