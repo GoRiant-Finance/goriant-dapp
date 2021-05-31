@@ -165,6 +165,10 @@ export default class StakingClient {
       })
     } catch (e) {
       console.log('Stake Error: ', e)
+      notify({
+        message: 'Deposit Amount',
+        description: 'Deposit Amount fail '
+      })
     }
   }
 
