@@ -1,9 +1,12 @@
-import { Button, Popover, Space, Card, Row, Col } from 'antd'
-import React, { useState, useEffect } from 'react'
+import { Card, Col, Input, Row } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useWallet } from '../../contexts/wallet'
 import { useConnection } from '../../contexts/connection'
 
 import Page from '../../components/layout/Page'
+
 import Container from '../../components/layout/Container'
 import styled from '../../utils/styled'
 import '../../core.less'
@@ -12,7 +15,7 @@ import '../../pool.less'
 import LoadingOverlay from '../../components/data/LoadingOverlay'
 import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
 import LoadingSpinner from '../../components/data/LoadingSpinner'
-import { formatUSD } from '../../utils/utils'
+import { formatUSD, formatNumber } from '../../utils/utils'
 import StakingClient from '../../solana/StakingClient'
 
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
@@ -22,13 +25,15 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
 
   const [showRiant, setShowRiant] = useState(false)
   const [showRay, setShowRay] = useState(false)
-  const [coinTypes, setCoinTypes] = useState(['withdraw', 'deposit'])
+  const [coinTypes] = useState(['withdraw', 'deposit'])
   const [riantPick, setRiantPick] = useState('deposit')
   const [totalStakedRiant, setTotalStakedRiant] = useState(0)
-  const [balanceSol, setBalanceSol] = useState(0)
+  const [balanceSol] = useState(0)
   const [riantStaked, setRiantStaked] = useState(0)
+  const [riantBalance, setRiantBalance] = useState(0)
   const [pendingReward, setPendingReward] = useState(0)
-
+  const [riantNumber, setRiantNumber] = useState('')
+  const [riantProcessing, setRiantProcessing] = useState(false)
 
   useEffect(() => {
     async function fetchMyAPI() {
@@ -37,25 +42,40 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       if (wallet && wallet.publicKey) {
         const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
         setUserRiant(isExist as boolean)
-      }
-      if(isUserRiant) {
-        const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
-        setRiantStaked(memberRiantBalances.stakedAmount)
-        setPendingReward(memberRiantBalances.pendingRewardAmount)
+        if (isUserRiant) {
+          const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+          setShowRiant(true)
+          setRiantBalance(memberRiantBalances.riantBalance)
+          setRiantStaked(memberRiantBalances.stakedAmount)
+          setPendingReward(memberRiantBalances.pendingRewardAmount)
+        } else {
+          setShowRiant(false)
+        }
+      } else {
 
+        setShowRiant(false)
+        setRiantBalance(0)
+        setRiantStaked(0)
+        setPendingReward(0)
       }
+
     }
     setInterval(() => {
       setLoading(false)
     }, 2000)
-    // fetchMyAPI()
-  })
+    fetchMyAPI()
+  }, [wallet, connected, isUserRiant, riantProcessing])
 
   const dark1 = '#28293D'
 
   const PoolPage = <div>{/* <Pool wallet={wallet} connection={connection} />: */}</div>
   const handlePickRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRiantPick(e.target.value)
+  }
+
+  const handleRianNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const data = event.target.value
+    setRiantNumber(data)
   }
 
   const options = coinTypes.map((loan, key) => {
@@ -82,29 +102,18 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     }
   }
 
+  const actionRiant = async () => {
+    if (riantPick === 'deposit') {
+      await StakingClient.deposit(connection, wallet as any, riantNumber as any, setRiantProcessing)
+      setRiantNumber('0')
+    } else if (riantPick === 'withdraw') {
+      await StakingClient.withdraw(connection, wallet as any, riantNumber as any, setRiantProcessing as any)
+      setRiantNumber('0')
+    }
+  }
   const createMember = async () => {
     await StakingClient.createMember(connection, wallet as any, setUserRiant)
   }
-
-  const PageContent = styled('article')`
-    max-width: ${props => props.theme.widths.lg};
-    margin: 0 auto;
-    line-height: 1.6;
-
-    a {
-      color: ${props => props.theme.colors.brand};
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-      margin-bottom: 0.5rem;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
-        Helvetica Neue, Arial, sans-serif;
-      line-height: 1.25;
-    }
-  `
 
   const CardTitle = styled('p')`
     font-weight: bold;
@@ -272,228 +281,237 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
             </LoadingOverlayInner>
           </LoadingOverlay>
         )}
-        <PageContent>
-          <Row gutter={20} style={{ marginBottom: 30 }}>
-            <Col xs={24} sm={10}>
-              <Row gutter={50}>
-                <Col span={24}>
-                  <Card bordered={false} style={{ background: dark1, borderRadius: 16, marginBottom: 20 }}>
-                    <CardTitle>Total Value Locked</CardTitle>
-                    <CardNumber>{formatUSD.format(balanceSol)}</CardNumber>
-                  </Card>
+        <Row gutter={20} style={{ marginBottom: 30 }}>
+          <Col xs={24} sm={10}>
+            <Row gutter={50}>
+              <Col span={24}>
+                <Card bordered={false} style={{ background: dark1, borderRadius: 16, marginBottom: 20 }}>
+                  <CardTitle>Total Value Locked</CardTitle>
+                  <CardNumber>{formatUSD.format(balanceSol)}</CardNumber>
+                </Card>
+              </Col>
+              <Col span={24}>
+                <Card bordered={false} style={{ background: dark1, borderRadius: 16 }}>
+                  <CardTitle>Total User Earned</CardTitle>
+                  <CardNumber>{formatUSD.format(432423434)}</CardNumber>
+                </Card>{' '}
+              </Col>
+            </Row>{' '}
+          </Col>
+
+          <Col xs={24} sm={14}>
+            <Card className="farmsPanel" bordered={false} style={{ background: dark1, borderRadius: 16, height: '100%' }}>
+              <CardTitle>Farms & Staking</CardTitle>
+              <Row gutter={16} style={{ verticalAlign: 'text-bottom', position: 'relative' }}>
+                <Col xs={24} sm={14}>
+                  <CardDashed className="farmsContainer">
+                    <div className="harvest">
+                      <div className="info">
+                        <h1>GORIANT to Harvest</h1>
+                        <span className="goriant text-yellow-1">0.126</span>
+                        <span className="text-red">-$5.18%</span>
+                      </div>
+                    </div>
+                    <div className="wallet">
+                      <div className="info">
+                        <h1>GORIANT to Wallet</h1>
+                        <span className="goriant text-yellow-1">2.126</span>
+                        <span className="text-green">+2.18%</span>
+                      </div>
+                    </div>
+                  </CardDashed>
                 </Col>
-                <Col span={24}>
-                  <Card bordered={false} style={{ background: dark1, borderRadius: 16 }}>
-                    <CardTitle>Total User Earned</CardTitle>
-                    <CardNumber>{formatUSD.format(432423434)}</CardNumber>
-                  </Card>{' '}
+                <Col xs={24} sm={8}>
+                  <div className="button">Harvest all (2)</div>
                 </Col>
               </Row>{' '}
-            </Col>
+            </Card>{' '}
+          </Col>
+        </Row>
 
-            <Col xs={24} sm={14}>
-              <Card className="farmsPanel" bordered={false} style={{ background: dark1, borderRadius: 16, height: '100%' }}>
-                <CardTitle>Farms & Staking</CardTitle>
-                <Row gutter={16} style={{ verticalAlign: 'text-bottom', position: 'relative' }}>
-                  <Col xs={24} sm={14}>
-                    <CardDashed className="farmsContainer">
-                      <div className="harvest">
-                        <div className="info">
-                          <h1>GORIANT to Harvest</h1>
-                          <span className="goriant text-yellow-1">0.126</span>
-                          <span className="text-red">-$5.18%</span>
-                        </div>
-                      </div>
-                      <div className="wallet">
-                        <div className="info">
-                          <h1>GORIANT to Wallet</h1>
-                          <span className="goriant text-yellow-1">2.126</span>
-                          <span className="text-green">+2.18%</span>
-                        </div>
-                      </div>
-                    </CardDashed>
-                  </Col>
-                  <Col xs={24} sm={8}>
-                    <div className="button">Harvest all (2)</div>
-                  </Col>
-                </Row>{' '}
-              </Card>{' '}
-            </Col>
-          </Row>
+        <Row gutter={20} className="compounding-container">
+          <Col span={24} style={{ marginBottom: 20 }}>
+            <Card
+              style={{
+                border: '2px solid transparent',
+                background: 'linear-gradient(#1C1C28 ,#1C1C28) padding-box, linear-gradient(to right, #00CFDE, #05A660) border-box',
+                borderRadius: 16
+              }}
+            >
+              <Row className="compounding-info goriant">
+                <Col sm={2} xs={8} md={4} className="logo-container">
+                  <Coin />
+                  <span className="text-yellow-1">RIANT</span>
+                </Col>
+                <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
+                  <div className="percent">131.63%</div>
+                  <div className="text">Auto-Compounding</div>
+                </Col>
+                <Col sm={5} xs={24} md={5} className="total-container">
+                  <div className="text">Total Stake</div>
+                  <div className="number">{formatNumber.format(totalStakedRiant)}</div>
+                </Col>
+                <Col sm={5} xs={24} md={5} className="staked-container">
+                  <div className="text">Staked</div>
+                  <div className="number">{formatNumber.format(riantStaked)}</div>
+                </Col>
 
-          <Row gutter={20} className="compounding-container">
-            <Col span={24} style={{ marginBottom: 20 }}>
-              <Card
-                style={{
-                  border: '2px solid transparent',
-                  background: 'linear-gradient(#1C1C28 ,#1C1C28) padding-box, linear-gradient(to right, #00CFDE, #05A660) border-box',
-                  borderRadius: 16
-                }}
-              >
-                <Row className="compounding-info goriant">
-                  <Col sm={2} xs={8} md={4} className="logo-container">
-                    <Coin />
-                    <span className="text-yellow-1">RIANT</span>
-                  </Col>
-                  <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
-                    <div className="percent">131.63%</div>
-                    <div className="text">Auto-Compounding</div>
-                  </Col>
-                  <Col sm={5} xs={24} md={5} className="total-container">
-                    <div className="text">Total Stake</div>
-                    <div className="number">{totalStakedRiant}</div>
-                  </Col>
-                  <Col sm={5} xs={24} md={5} className="staked-container">
-                    <div className="text">Staked</div>
-                    <div className="number">{riantStaked}</div>
-                  </Col>
-                  <Col sm={4} xs={24} md={4} className="detail-button">
-                    {!connected ? (
-                      <div className="connect" onClick={() => select()}>
-                        Connect Wallet
+                <Col sm={4} xs={24} md={4} className="detail-button">
+                  {!connected ? (
+                    <div className="connect" onClick={() => select()}>
+                      Connect Wallet
+                    </div>
+                  ) : (
+                    [
+                      !isUserRiant ? (
+                        <div className="button" onClick={() => createMember()}>
+                          Enable
+                        </div>
+                      ) : (
+                        <a onClick={() => hideComponent('showRiant')}>Detail</a>
+                      )
+                    ]
+                  )}
+                </Col>
+              </Row>
+              {showRiant && (
+                <Row className="feature-container">
+                  <Col span={5}>
+                    <div className="contract-info">
+                      <div className="set-pair-info">
+                        <ArrowLeftIcon /> Set Pair Info
                       </div>
-                    ) : (
-                      [
-                        !isUserRiant ? (
-                          <div className="button" onClick={() => createMember()}>
-                            Enable
-                          </div>
-                        ) : (
-                          <a onClick={() => hideComponent('showRiant')}>Detail</a>
-                        )
-                      ]
-                    )}
+                      <div className="view-contract">
+                        <ArrowLeftIcon />
+                        View Contract
+                      </div>
+                      <Row className="auto">
+                        <div className="button">
+                          <AutoIcon /> <span className="text">AUTO</span>
+                        </div>
+                        <Info />
+                      </Row>
+                    </div>
+                  </Col>
+                  <Col className="staked-container" span={4}>
+                    <div className="text">PENDING REWARD</div>
+                    <div className="number">{formatNumber.format(pendingReward)}</div>
+                  </Col>
+                  <Col className="withdraw-deposit-container" sm={11} xs={24}>
+                    <div>{options}</div>
+                    <Row className="stake-amount">
+                      <Col sm={18} xs={24} className="number-container">
+                        <Row>
+                          <Col className="number" sm={17} xs={15}>
+                            <Input
+                              className="number"
+                              placeholder="0"
+                              name="riantAmout"
+                              type="number"
+                              value={riantNumber}
+                              onChange={handleRianNumberChange}
+                            />
+                          </Col>
+                          <Col className="text" sm={3} xs={6}>
+                            <span>RIANT</span>
+                          </Col>
+                          <Col className="max-button" span={3}>
+                            <div className="button">MAX</div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col className="deposit-button-container" sm={6} xs={24}>
+                        <button disabled={riantProcessing} onClick={() => actionRiant()} className="deposit-button">
+                          {riantProcessing && <FontAwesomeIcon className="icon-button" icon={faCircleNotch} size="lg" spin />}
+                          {riantPick}
+                        </button>
+                      </Col>
+                    </Row>
+                    <div className="wallet-balance">WALLET BALANCE: {formatNumber.format(riantBalance)} RIANT</div>
                   </Col>
                 </Row>
-                {showRiant && (
-                  <Row className="feature-container">
-                    <Col span={5}>
-                      <div className="contract-info">
-                        <div className="set-pair-info">
-                          <ArrowLeftIcon /> Set Pair Info
-                        </div>
-                        <div className="view-contract">
-                          <ArrowLeftIcon />
-                          View Contract
-                        </div>
-                        <Row className="auto">
-                          <div className="button">
-                            <AutoIcon /> <span className="text">AUTO</span>
-                          </div>
-                          <Info />
-                        </Row>
+              )}
+            </Card>{' '}
+          </Col>
+          <Col span={24}>
+            <Card
+              style={{
+                border: '2px solid transparent',
+                background: 'linear-gradient(#1C1C28,#1C1C28) padding-box, linear-gradient(to right, #00CFDE, #05A660) border-box',
+                borderRadius: 16
+              }}
+            >
+              <Row className="compounding-info ray">
+                <Col sm={2} xs={8} md={4} className="logo-container">
+                  <Ray />
+                  <span className="">RAY</span>
+                </Col>
+                <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
+                  <div className="percent">131.63%</div>
+                  <div className="text">Auto-Compounding</div>
+                </Col>
+                <Col sm={5} xs={24} md={6} className="total-container">
+                  <div className="text">Total Stake</div>
+                  <div className="number">248,007,819.70</div>
+                </Col>
+                <Col sm={5} xs={24} md={4} className="staked-container">
+                  <div className="text">Staked</div>
+                  <div className="number">42.00</div>
+                </Col>
+                <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
+                  <a onClick={() => hideComponent('showRay')}>Detail</a>
+                </Col>
+              </Row>
+              {showRay && (
+                <Row className="feature-container">
+                  <Col span={5}>
+                    <div className="contract-info">
+                      <div className="set-pair-info">
+                        <ArrowLeftIcon /> Set Pair Info
                       </div>
-                    </Col>
-                    <Col className="staked-container" span={4}>
-                      <div className="text">PENDING REWARD</div>
-                      <div className="number">{pendingReward}</div>
-                    </Col>
-                    <Col className="withdraw-deposit-container" sm={11} xs={24}>
-                      <div>{options}</div>
-                      <Row className="stake-amount">
-                        <Col sm={18} xs={24} className="number-container">
-                          <Row>
-                            <Col className="number" sm={17} xs={15}>
-                              0
-                            </Col>
-                            <Col className="text" sm={3} xs={6}>
-                              <span>RIANT</span>
-                            </Col>
-                            <Col className="max-button" span={3}>
-                              <div className="button">MAX</div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col className="deposit-button-container" sm={6} xs={24}>
-                          <div className="deposit-button">{riantPick}</div>
-                        </Col>
+                      <div className="view-contract">
+                        <ArrowLeftIcon />
+                        View Contract
+                      </div>
+                      <Row className="auto">
+                        <div className="button">
+                          <AutoIcon /> <span className="text">AUTO</span>
+                        </div>
+                        <Info />
                       </Row>
-                      <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
-                    </Col>
-                  </Row>
-                )}
-              </Card>{' '}
-            </Col>
-            <Col span={24}>
-              <Card
-                style={{
-                  border: '2px solid transparent',
-                  background: 'linear-gradient(#1C1C28,#1C1C28) padding-box, linear-gradient(to right, #00CFDE, #05A660) border-box',
-                  borderRadius: 16
-                }}
-              >
-                <Row className="compounding-info ray">
-                  <Col sm={2} xs={8} md={4} className="logo-container">
-                    <Ray />
-                    <span className="">RAY</span>
+                    </div>
                   </Col>
-                  <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
-                    <div className="percent">131.63%</div>
-                    <div className="text">Auto-Compounding</div>
+                  <Col className="staked-container" span={4}>
+                    <div className="text">STAKED</div>
+                    <div className="number">20.195</div>
                   </Col>
-                  <Col sm={5} xs={24} md={6} className="total-container">
-                    <div className="text">Total Stake</div>
-                    <div className="number">248,007,819.70</div>
-                  </Col>
-                  <Col sm={5} xs={24} md={4} className="staked-container">
-                    <div className="text">Staked</div>
-                    <div className="number">42.00</div>
-                  </Col>
-                  <Col sm={2} xs={24} md={2} className="detail-button" span={2}>
-                    <a onClick={() => hideComponent('showRay')}>Detail</a>
+                  <Col className="withdraw-deposit-container" sm={11} xs={24}>
+                    <div>{options}</div>
+                    <Row className="stake-amount">
+                      <Col sm={18} xs={24} className="number-container">
+                        <Row>
+                          <Col className="number" sm={17} xs={15}>
+                            0
+                          </Col>
+                          <Col className="text" sm={3} xs={6}>
+                            <span>RAY</span>
+                          </Col>
+                          <Col className="max-button" span={3}>
+                            <div className="button">MAX</div>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col className="deposit-button-container" sm={6} xs={24}>
+                        <div className="deposit-button"> {riantPick}</div>
+                      </Col>
+                    </Row>
+                    <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
                   </Col>
                 </Row>
-                {showRay && (
-                  <Row className="feature-container">
-                    <Col span={5}>
-                      <div className="contract-info">
-                        <div className="set-pair-info">
-                          <ArrowLeftIcon /> Set Pair Info
-                        </div>
-                        <div className="view-contract">
-                          <ArrowLeftIcon />
-                          View Contract
-                        </div>
-                        <Row className="auto">
-                          <div className="button">
-                            <AutoIcon /> <span className="text">AUTO</span>
-                          </div>
-                          <Info />
-                        </Row>
-                      </div>
-                    </Col>
-                    <Col className="staked-container" span={4}>
-                      <div className="text">STAKED</div>
-                      <div className="number">20.195</div>
-                    </Col>
-                    <Col className="withdraw-deposit-container" sm={11} xs={24}>
-                      <div>{options}</div>
-                      <Row className="stake-amount">
-                        <Col sm={18} xs={24} className="number-container">
-                          <Row>
-                            <Col className="number" sm={17} xs={15}>
-                              0
-                            </Col>
-                            <Col className="text" sm={3} xs={6}>
-                              <span>RAY</span>
-                            </Col>
-                            <Col className="max-button" span={3}>
-                              <div className="button">MAX</div>
-                            </Col>
-                          </Row>
-                        </Col>
-                        <Col className="deposit-button-container" sm={6} xs={24}>
-                          <div className="deposit-button">{riantPick}</div>
-                        </Col>
-                      </Row>
-                      <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
-                    </Col>
-                  </Row>
-                )}
-              </Card>{' '}
-            </Col>
-          </Row>
-        </PageContent>
+              )}
+            </Card>{' '}
+          </Col>
+        </Row>
       </Container>
     </Page>
   )

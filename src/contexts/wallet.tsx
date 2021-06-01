@@ -136,6 +136,7 @@ export function WalletProvider({ children = null as any }) {
 
       wallet.on("disconnect", () => {
         setConnected(false);
+        setIsUserRiant(false);
         notify({
           message: "Wallet update",
           description: "Disconnected from wallet",

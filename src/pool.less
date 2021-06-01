@@ -227,8 +227,21 @@
   padding-right: 10px;
   font-weight: 500;
   font-size: 22px;
+  font-weight: 500;
+  border: unset;
+  background: #26283b;
 }
 
+.withdraw-deposit-container .stake-amount .number-container .number input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.withdraw-deposit-container .stake-amount .number-container .number input:focus-visible
+  {
+    outline: 0 !important;
+    box-shadow: none !important;
+}
 .withdraw-deposit-container .stake-amount .number-container .text {
   font-weight: 500;
   font-size: 16px;
@@ -271,7 +284,7 @@
   position: relative;
 }
 
-.withdraw-deposit-container .stake-amount .deposit-button-container .deposit-button {
+.withdraw-deposit-container .stake-amount .deposit-button-container button {
   background-color: #05a660;
   border-radius: 0.5em;
   text-transform: capitalize;
@@ -280,7 +293,18 @@
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 10px;
+  border-style: unset;
+  box-sizing: unset;
   cursor: pointer;
+}
+
+.withdraw-deposit-container .stake-amount .deposit-button-container button:disabled {
+  background-color: #555770;
+  color: #8F90A6;
+}
+
+.withdraw-deposit-container .stake-amount .deposit-button-container .deposit-button .icon-button {
+  margin-right:5px;
 }
 
 .withdraw-deposit-container .wallet-balance {
