@@ -1,12 +1,11 @@
-import { Card, Row, Col, Input } from 'antd'
-import React, { useState, useEffect } from 'react'
+import { Card, Col, Input, Row } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useWallet } from '../../contexts/wallet'
 import { useConnection } from '../../contexts/connection'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 
 import Page from '../../components/layout/Page'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Container from '../../components/layout/Container'
 import styled from '../../utils/styled'
@@ -16,9 +15,8 @@ import '../../pool.less'
 import LoadingOverlay from '../../components/data/LoadingOverlay'
 import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
 import LoadingSpinner from '../../components/data/LoadingSpinner'
-import { formatUSD } from '../../utils/utils'
+import { formatUSD, formatNumber } from '../../utils/utils'
 import StakingClient from '../../solana/StakingClient'
-import { ArrowsAltOutlined } from '@ant-design/icons'
 
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const { wallet, connected, isUserRiant, setUserRiant, select } = useWallet()
@@ -32,6 +30,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [totalStakedRiant, setTotalStakedRiant] = useState(0)
   const [balanceSol] = useState(0)
   const [riantStaked, setRiantStaked] = useState(0)
+  const [riantBalance, setRiantBalance] = useState(0)
   const [pendingReward, setPendingReward] = useState(0)
   const [riantNumber, setRiantNumber] = useState('')
   const [riantProcessing, setRiantProcessing] = useState(false)
@@ -43,22 +42,23 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       if (wallet && wallet.publicKey) {
         const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
         setUserRiant(isExist as boolean)
+        if (isUserRiant) {
+          const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+          setShowRiant(true)
+          setRiantBalance(memberRiantBalances.riantBalance)
+          setRiantStaked(memberRiantBalances.stakedAmount)
+          setPendingReward(memberRiantBalances.pendingRewardAmount)
+        } else {
+          setShowRiant(false)
+        }
       }
-      if (isUserRiant) {
-        const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
-        setShowRiant(true)
 
-        setRiantStaked(memberRiantBalances.stakedAmount)
-        setPendingReward(memberRiantBalances.pendingRewardAmount)
-      } else {
-        setShowRiant(false)
-      }
     }
     setInterval(() => {
       setLoading(false)
     }, 2000)
     fetchMyAPI()
-  }, [wallet, connected, isUserRiant])
+  }, [wallet, connected, isUserRiant, riantProcessing])
 
   const dark1 = '#28293D'
 
@@ -97,11 +97,10 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   }
 
   const actionRiant = async () => {
-    if (riantPick == 'deposit') {
+    if (riantPick === 'deposit') {
       await StakingClient.deposit(connection, wallet as any, riantNumber as any, setRiantProcessing)
       setRiantNumber('0')
-    }
-    else if (riantPick == 'withdraw') {
+    } else if (riantPick === 'withdraw') {
       await StakingClient.withdraw(connection, wallet as any, riantNumber as any, setRiantProcessing as any)
       setRiantNumber('0')
     }
@@ -344,11 +343,11 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                 </Col>
                 <Col sm={5} xs={24} md={5} className="total-container">
                   <div className="text">Total Stake</div>
-                  <div className="number">{totalStakedRiant}</div>
+                  <div className="number">{formatNumber.format(totalStakedRiant)}</div>
                 </Col>
                 <Col sm={5} xs={24} md={5} className="staked-container">
                   <div className="text">Staked</div>
-                  <div className="number">{riantStaked}</div>
+                  <div className="number">{formatNumber.format(riantStaked)}</div>
                 </Col>
 
                 <Col sm={4} xs={24} md={4} className="detail-button">
@@ -390,7 +389,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                   </Col>
                   <Col className="staked-container" span={4}>
                     <div className="text">PENDING REWARD</div>
-                    <div className="number">{pendingReward}</div>
+                    <div className="number">{formatNumber.format(pendingReward)}</div>
                   </Col>
                   <Col className="withdraw-deposit-container" sm={11} xs={24}>
                     <div>{options}</div>
@@ -405,7 +404,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                               type="number"
                               value={riantNumber}
                               onChange={handleRianNumberChange}
-                            ></Input>
+                            />
                           </Col>
                           <Col className="text" sm={3} xs={6}>
                             <span>RIANT</span>
@@ -422,7 +421,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                         </button>
                       </Col>
                     </Row>
-                    <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
+                    <div className="wallet-balance">WALLET BALANCE: {formatNumber.format(riantBalance)} RIANT</div>
                   </Col>
                 </Row>
               )}

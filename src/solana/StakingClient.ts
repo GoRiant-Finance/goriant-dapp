@@ -5,6 +5,7 @@ import { Wallet } from '@project-serum/anchor/src/provider'
 import { Program, Provider, setProvider, web3 } from '@project-serum/anchor'
 import BN from 'bn.js'
 import { TokenInstructions } from '@project-serum/serum'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import config from './staking-config.json'
 import Utils from './utils'
 
@@ -50,7 +51,7 @@ function calculatePendingReward(totalStaked: BN, state: any, memberStaked: BN, m
     return 0
   }
 
-  const multiplier = new BN (Utils.getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock))
+  const multiplier = new BN(Utils.getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock))
   const tokenReward = multiplier.mul(rewardPerBlock)
   const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaked))
   const pendingReward = memberStaked
@@ -68,7 +69,7 @@ export default class StakingClient {
     return 0
   }
 
-  public static async createMember(connection: Connection, wallet: Wallet, setUserRiant : any) {
+  public static async createMember(connection: Connection, wallet: Wallet, setUserRiant: any) {
     loadProgram(connection, wallet)
 
     const state = (await program.state()) as any
@@ -125,13 +126,20 @@ export default class StakingClient {
     return true
   }
 
-  public static async deposit(connection: Connection, wallet: Wallet, amount: number, setRiantProcessing : any) {
-    setRiantProcessing(true);
+  public static async deposit(connection: Connection, wallet: Wallet, amount: number, setRiantProcessing: any) {
+    setRiantProcessing(true)
 
     loadProgram(connection, wallet)
 
     const owner = provider.wallet.publicKey
-    const god = new web3.PublicKey(config.program.vault)
+
+    const god = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(config.program.token),
+      owner
+    )
+
     const state = (await program.state()) as any
     const stateFunction = program.state as any
     const statePubKey = await stateFunction.address()
@@ -161,7 +169,7 @@ export default class StakingClient {
         }
       })
       console.log('tx: ', tx)
-      setRiantProcessing(false);
+      setRiantProcessing(false)
       notify({
         message: 'Deposit Amount',
         description: 'Deposit Amount successful '
@@ -172,16 +180,21 @@ export default class StakingClient {
         message: 'Deposit Amount',
         description: 'Deposit Amount fail  '
       })
-      setRiantProcessing(false);
-
+      setRiantProcessing(false)
     }
   }
 
-  public static async withdraw(connection: Connection, wallet: Wallet,amount: number, setRiantProcessing : any) {
-    setRiantProcessing(true);
+  public static async withdraw(connection: Connection, wallet: Wallet, amount: number, setRiantProcessing: any) {
+    setRiantProcessing(true)
     loadProgram(connection, wallet)
 
-    const tokenAccount = new web3.PublicKey(config.program.vault)
+    const owner = provider.wallet.publicKey
+    const tokenAccount = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(config.program.token),
+      owner
+    )
     const state = (await program.state()) as any
     const stateFunction = program.state as any
     const statePubKey = await stateFunction.address()
@@ -194,13 +207,14 @@ export default class StakingClient {
       program.programId
     )
 
-    const withdrawAmount = new BN(amount)
+    const withdrawAmount = new BN(amount * LAMPORTS_PER_SOL)
     try {
       const tx = await program.rpc.withdraw(withdrawAmount, {
         accounts: {
           stakingPool: statePubKey,
           poolMint: state.poolMint,
           imprint: state.imprint,
+          rewardVault: state.rewardVault,
           member,
           authority: provider.wallet.publicKey,
           balances,
@@ -217,8 +231,6 @@ export default class StakingClient {
 
       console.log('memberAccount.owner: ', memberAccount.authority.toString())
       console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
-      console.log('memberAccount.rewardsCursor: ', memberAccount.rewardsCursor.toString())
-      console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
       console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
 
       const memberBalances = memberAccount.balances
@@ -241,10 +253,9 @@ export default class StakingClient {
         message: 'Withdraw Amount',
         description: 'Withdraw Amount successful '
       })
-      setRiantProcessing(false);
-
+      setRiantProcessing(false)
     } catch (e) {
-      setRiantProcessing(false);
+      setRiantProcessing(false)
       notify({
         message: 'Withdraw Amount',
         description: 'Withdraw Amount fail '
@@ -305,18 +316,27 @@ export default class StakingClient {
   }
 
   public static async getMemberRiantBalances(connection: Connection, wallet: Wallet) {
-    console.log("Ko ra ne")
+    console.log('Ko ra ne')
     loadProgram(connection, wallet)
+    const owner = provider.wallet.publicKey
     const currentBlock = Math.floor(Date.now().valueOf() / 1000)
     const state = (await program.state()) as any
     const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
     const totalStaked = new BN((await provider.connection.getTokenSupply(state.poolMint)).value.amount)
     const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
-    return {
+    const riantWallet = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(config.program.token),
+      owner
+    )
+    const riantBalance = new BN((await provider.connection.getTokenAccountBalance(riantWallet)).value.amount)
 
-      stakedAmount: memberStaked.toNumber() / 1_000_000_000,
-      pendingRewardAmount: pendingRewardAmount / 1_000_000_000
+    return {
+      riantBalance: riantBalance.toNumber() / LAMPORTS_PER_SOL,
+      stakedAmount: memberStaked.toNumber() / LAMPORTS_PER_SOL,
+      pendingRewardAmount: pendingRewardAmount / LAMPORTS_PER_SOL
     }
   }
 }
