@@ -5,6 +5,7 @@ import { Wallet } from '@project-serum/anchor/src/provider'
 import { Program, Provider, setProvider, web3 } from '@project-serum/anchor'
 import BN from 'bn.js'
 import { TokenInstructions } from '@project-serum/serum'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import config from './staking-config.json'
 import Utils from './utils'
 
@@ -131,7 +132,14 @@ export default class StakingClient {
     loadProgram(connection, wallet)
 
     const owner = provider.wallet.publicKey
-    const god = new web3.PublicKey('2dQAxY8tsKKhXxAA6TUUPCzxB9HxEciLqXqEtVpoEPjq')
+
+    const god = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(config.program.token),
+      owner
+    )
+
     const state = (await program.state()) as any
     const stateFunction = program.state as any
     const statePubKey = await stateFunction.address()
@@ -180,7 +188,13 @@ export default class StakingClient {
     setRiantProcessing(true)
     loadProgram(connection, wallet)
 
-    const tokenAccount = new web3.PublicKey(config.program.vault)
+    const owner = provider.wallet.publicKey
+    const tokenAccount = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(config.program.token),
+      owner
+    )
     const state = (await program.state()) as any
     const stateFunction = program.state as any
     const statePubKey = await stateFunction.address()
@@ -193,13 +207,14 @@ export default class StakingClient {
       program.programId
     )
 
-    const withdrawAmount = new BN(amount)
+    const withdrawAmount = new BN(amount * LAMPORTS_PER_SOL)
     try {
       const tx = await program.rpc.withdraw(withdrawAmount, {
         accounts: {
           stakingPool: statePubKey,
           poolMint: state.poolMint,
           imprint: state.imprint,
+          rewardVault: state.rewardVault,
           member,
           authority: provider.wallet.publicKey,
           balances,
@@ -216,8 +231,6 @@ export default class StakingClient {
 
       console.log('memberAccount.owner: ', memberAccount.authority.toString())
       console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
-      console.log('memberAccount.rewardsCursor: ', memberAccount.rewardsCursor.toString())
-      console.log('memberAccount.lastStakeTs: ', memberAccount.lastStakeTs.toString())
       console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
 
       const memberBalances = memberAccount.balances
@@ -305,13 +318,22 @@ export default class StakingClient {
   public static async getMemberRiantBalances(connection: Connection, wallet: Wallet) {
     console.log('Ko ra ne')
     loadProgram(connection, wallet)
+    const owner = provider.wallet.publicKey
     const currentBlock = Math.floor(Date.now().valueOf() / 1000)
     const state = (await program.state()) as any
     const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
     const totalStaked = new BN((await provider.connection.getTokenSupply(state.poolMint)).value.amount)
     const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
+    const riantWallet = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(config.program.token),
+      owner
+    )
+    const riantBalance = new BN((await provider.connection.getTokenAccountBalance(riantWallet)).value.amount)
     return {
+      riantBalance,
       stakedAmount: memberStaked.toNumber() / 1_000_000_000,
       pendingRewardAmount: pendingRewardAmount / 1_000_000_000
     }

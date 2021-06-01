@@ -46,6 +46,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
         const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
         setShowRiant(true)
 
+        // setRiantBalance(memberRiantBalances.riantBalance)
         setRiantStaked(memberRiantBalances.stakedAmount)
         setPendingReward(memberRiantBalances.pendingRewardAmount)
       } else {
