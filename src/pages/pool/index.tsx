@@ -51,6 +51,12 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
         } else {
           setShowRiant(false)
         }
+      } else {
+
+        setShowRiant(false)
+        setRiantBalance(0)
+        setRiantStaked(0)
+        setPendingReward(0)
       }
 
     }
