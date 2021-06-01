@@ -30,6 +30,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [totalStakedRiant, setTotalStakedRiant] = useState(0)
   const [balanceSol] = useState(0)
   const [riantStaked, setRiantStaked] = useState(0)
+  const [riantBalance, setRiantBalance] = useState(0)
   const [pendingReward, setPendingReward] = useState(0)
   const [riantNumber, setRiantNumber] = useState('')
   const [riantProcessing, setRiantProcessing] = useState(false)
@@ -41,17 +42,17 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       if (wallet && wallet.publicKey) {
         const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
         setUserRiant(isExist as boolean)
+        if (isUserRiant) {
+          const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
+          setShowRiant(true)
+          setRiantBalance(memberRiantBalances.riantBalance)
+          setRiantStaked(memberRiantBalances.stakedAmount)
+          setPendingReward(memberRiantBalances.pendingRewardAmount)
+        } else {
+          setShowRiant(false)
+        }
       }
-      if (isUserRiant) {
-        const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
-        setShowRiant(true)
 
-        // setRiantBalance(memberRiantBalances.riantBalance)
-        setRiantStaked(memberRiantBalances.stakedAmount)
-        setPendingReward(memberRiantBalances.pendingRewardAmount)
-      } else {
-        setShowRiant(false)
-      }
     }
     setInterval(() => {
       setLoading(false)
@@ -420,7 +421,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                         </button>
                       </Col>
                     </Row>
-                    <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
+                    <div className="wallet-balance">WALLET BALANCE: {formatNumber.format(riantBalance)} RIANT</div>
                   </Col>
                 </Row>
               )}
