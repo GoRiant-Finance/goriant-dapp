@@ -80,11 +80,16 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const options = coinTypes.map((loan, key) => {
     const isCurrent = riantPick === loan
     return (
+      <span>
       <span key={key} className="radioPad">
         <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
           <input className="text" type="radio" name="riantTypes" id={loan} value={loan} onChange={handlePickRadio} />
           {loan}
         </label>
+      </span>
+      <label className={'text text-gradient-4'}>
+      {key < coinTypes.length - 1 ? "|" : ""}
+      </label>
       </span>
     )
   })
@@ -381,8 +386,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                         <ArrowLeftIcon /> Set Pair Info
                       </div>
                       <div className="view-contract">
-                        <ArrowLeftIcon />
-                        View Contract
+                        <ArrowLeftIcon /> View Contract
                       </div>
                       <Row className="auto">
                         <div className="button">
