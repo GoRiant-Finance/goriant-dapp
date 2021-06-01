@@ -1,13 +1,10 @@
 import { Card, Row, Col, Input } from 'antd'
 import React, { useState, useEffect } from 'react'
+import { ArrowsAltOutlined } from '@ant-design/icons'
 import { useWallet } from '../../contexts/wallet'
 import { useConnection } from '../../contexts/connection'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 
 import Page from '../../components/layout/Page'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 import Container from '../../components/layout/Container'
 import styled from '../../utils/styled'
 import '../../core.less'
@@ -18,7 +15,6 @@ import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
 import LoadingSpinner from '../../components/data/LoadingSpinner'
 import { formatUSD } from '../../utils/utils'
 import StakingClient from '../../solana/StakingClient'
-import { ArrowsAltOutlined } from '@ant-design/icons'
 
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const { wallet, connected, isUserRiant, setUserRiant, select } = useWallet()
@@ -34,7 +30,6 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [riantStaked, setRiantStaked] = useState(0)
   const [pendingReward, setPendingReward] = useState(0)
   const [riantNumber, setRiantNumber] = useState('')
-  const [riantProcessing, setRiantProcessing] = useState(false)
 
   useEffect(() => {
     async function fetchMyAPI() {
@@ -47,18 +42,15 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       if (isUserRiant) {
         const memberRiantBalances = await StakingClient.getMemberRiantBalances(connection, wallet as any)
         setShowRiant(true)
-
         setRiantStaked(memberRiantBalances.stakedAmount)
         setPendingReward(memberRiantBalances.pendingRewardAmount)
-      } else {
-        setShowRiant(false)
       }
     }
     setInterval(() => {
       setLoading(false)
-    }, 2000)
+    }, 20_000)
     fetchMyAPI()
-  }, [wallet, connected, isUserRiant])
+  })
 
   const dark1 = '#28293D'
 
@@ -67,7 +59,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     setRiantPick(e.target.value)
   }
 
-  const handleRianNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRiantNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const data = event.target.value
     setRiantNumber(data)
   }
@@ -97,13 +89,9 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   }
 
   const actionRiant = async () => {
+    console.log('riantPick: ', riantPick)
     if (riantPick == 'deposit') {
-      await StakingClient.deposit(connection, wallet as any, riantNumber as any, setRiantProcessing)
-      setRiantNumber('0')
-    }
-    else if (riantPick == 'withdraw') {
-      await StakingClient.withdraw(connection, wallet as any, riantNumber as any, setRiantProcessing as any)
-      setRiantNumber('0')
+      await StakingClient.deposit(connection, wallet as any, riantNumber as any)
     }
   }
   const createMember = async () => {
@@ -401,11 +389,11 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                             <Input
                               className="number"
                               placeholder="0"
-                              name="riantAmout"
+                              name="riantAmount"
                               type="number"
                               value={riantNumber}
-                              onChange={handleRianNumberChange}
-                            ></Input>
+                              onChange={handleRiantNumberChange}
+                            />
                           </Col>
                           <Col className="text" sm={3} xs={6}>
                             <span>RIANT</span>
@@ -416,13 +404,12 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                         </Row>
                       </Col>
                       <Col className="deposit-button-container" sm={6} xs={24}>
-                        <button disabled={riantProcessing} onClick={() => actionRiant()} className="deposit-button">
-                          {riantProcessing && <FontAwesomeIcon className="icon-button" icon={faCircleNotch} size="lg" spin />}
+                        <div onClick={() => actionRiant()} className="deposit-button">
                           {riantPick}
-                        </button>
+                        </div>
                       </Col>
                     </Row>
-                    <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
+                    <div className="wallet-balance">WALLET BALANCE: 9999.000 RIANT</div>
                   </Col>
                 </Row>
               )}
@@ -497,10 +484,10 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                         </Row>
                       </Col>
                       <Col className="deposit-button-container" sm={6} xs={24}>
-                        <div className="deposit-button"> {riantPick}</div>
+                        <div className="deposit-button">{riantPick}</div>
                       </Col>
                     </Row>
-                    <div className="wallet-balance">WALLET BALANCE: 0.000 RIANT</div>
+                    <div className="wallet-balance">WALLET BALANCE: 8888.000 RAY</div>
                   </Col>
                 </Row>
               )}
