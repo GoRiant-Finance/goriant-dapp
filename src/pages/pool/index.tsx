@@ -52,7 +52,6 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
           setShowRiant(false)
         }
       } else {
-
         setShowRiant(false)
         setRiantBalance(0)
         setRiantStaked(0)
@@ -421,7 +420,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                         </Row>
                       </Col>
                       <Col className="deposit-button-container" sm={6} xs={24}>
-                        <button disabled={riantProcessing} onClick={() => actionRiant()} className="deposit-button">
+                        <button disabled={riantProcessing || riantNumber == ''} onClick={() => actionRiant()} className="deposit-button">
                           {riantProcessing && <FontAwesomeIcon className="icon-button" icon={faCircleNotch} size="lg" spin />}
                           {riantPick}
                         </button>
