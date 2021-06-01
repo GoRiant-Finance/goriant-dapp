@@ -332,10 +332,11 @@ export default class StakingClient {
       owner
     )
     const riantBalance = new BN((await provider.connection.getTokenAccountBalance(riantWallet)).value.amount)
+
     return {
-      riantBalance,
-      stakedAmount: memberStaked.toNumber() / 1_000_000_000,
-      pendingRewardAmount: pendingRewardAmount / 1_000_000_000
+      riantBalance: riantBalance.toNumber() / LAMPORTS_PER_SOL,
+      stakedAmount: memberStaked.toNumber() / LAMPORTS_PER_SOL,
+      pendingRewardAmount: pendingRewardAmount / LAMPORTS_PER_SOL
     }
   }
 }
