@@ -17,6 +17,8 @@ import { useLocalStorageState } from "./../utils/utils";
 import { LedgerWalletAdapter } from "../wallet-adapters/ledger";
 import { SolongWalletAdapter } from "../wallet-adapters/solong";
 import { PhantomWalletAdapter } from "../wallet-adapters/phantom";
+import { borderRadius } from "polished";
+import { Row, Col } from 'antd'
 
 const ASSETS_URL =
   "https://raw.githubusercontent.com/solana-labs/oyster/main/assets/wallets/";
@@ -164,7 +166,6 @@ export function WalletProvider({ children = null as any }) {
   const select = useCallback(() => {console.log("test select") ;setIsModalVisible(true); console.log(isModalVisible)}, []);
   const close = useCallback(() => setIsModalVisible(false), []);
   const setUserRiant = (a : boolean) => setIsUserRiant(a);
-  console.log(select)
 
   return (
     <WalletContext.Provider
@@ -185,8 +186,11 @@ export function WalletProvider({ children = null as any }) {
         visible={isModalVisible}
         okButtonProps={{ style: { display: "none" } }}
         onCancel={close}
-        width={400}
+        closable={false}
+        width="100%"
       >
+        <div>__________________</div>
+        <Row justify="center" style={{maxWidth: "50%", margin: "auto"}}>
         {WALLET_PROVIDERS.map((provider) => {
           const onClick = function () {
             setProviderUrl(provider.url);
@@ -195,30 +199,28 @@ export function WalletProvider({ children = null as any }) {
           };
 
           return (
-            <Button
-              size="large"
-              type={providerUrl === provider.url ? "primary" : "ghost"}
-              onClick={onClick}
-              icon={
+            <Col className="border-modal" sm={5} xs={24}>
+              <Button
+                size="large"
+                type={providerUrl === provider.url ? "link" : "ghost"}
+                onClick={onClick}
+                className="provider-button ant-button"
+                icon={
                 <img
                   alt={`${provider.name}`}
-                  width={20}
-                  height={20}
+                  width={40}
+                  height={40}
                   src={provider.icon}
-                  style={{ marginRight: 8 }}
+                  className="provider-img"
                 />
               }
-              style={{
-                display: "block",
-                width: "100%",
-                textAlign: "left",
-                marginBottom: 8,
-              }}
-            >
+                >
               {provider.name}
-            </Button>
+              </Button>
+            </Col>
           );
         })}
+        </Row>
       </Modal>
     </WalletContext.Provider>
   );

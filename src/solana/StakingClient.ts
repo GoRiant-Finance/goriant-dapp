@@ -325,13 +325,11 @@ export default class StakingClient {
     const totalStaked = new BN((await provider.connection.getTokenSupply(state.poolMint)).value.amount)
     const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
-    const riantWallet = await Token.getAssociatedTokenAddress(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TokenInstructions.TOKEN_PROGRAM_ID,
-      new web3.PublicKey(config.program.token),
-      owner
-    )
-    const riantBalance = new BN((await provider.connection.getTokenAccountBalance(riantWallet)).value.amount)
+
+    const riantWallet = await Utils.getOrCreateAssociatedAccountInfo(provider, new web3.PublicKey(config.program.token), owner)
+    console.log('riantWallet: ', riantWallet)
+    let riantBalance = new BN(0)
+    if (riantWallet) riantBalance = new BN((await provider.connection.getTokenAccountBalance(riantWallet)).value.amount)
 
     return {
       riantBalance: riantBalance.toNumber() / LAMPORTS_PER_SOL,

@@ -43,9 +43,6 @@ export class CurrentUserBadge extends React.Component<any, any> {
     return (
       <span style={{fontSize: 19}}>
         {shortenAddress(`${this.state.wallet.publicKey}`)} Balance: {this.state.balance} SOL
-        <OptionButton>
-          <IconMenu/>
-        </OptionButton>
       </span>
     );
   }
