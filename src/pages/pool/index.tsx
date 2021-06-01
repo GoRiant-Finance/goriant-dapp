@@ -48,7 +48,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     setInterval(() => {
       setLoading(false)
     }, 2000)
-    fetchMyAPI()
+    // fetchMyAPI()
   })
 
   const dark1 = '#28293D'
