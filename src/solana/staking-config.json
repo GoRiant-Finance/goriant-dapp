@@ -1,8 +1,7 @@
 {
   "program": {
-    "staking.programId": "GUtKSox4AKcr74J11F6F5Ro1aDjLdNVXTR4AE9XjCKEq",
-    "token": "Ek932QWfERCfYFDSB98dbjJxas2LUSudgz5yC2eKvZ13",
-    "vault": "8yAk3eC7kYdt8nPKPpamL3G9yZARDVYziwxVWbaaBQUp"
+    "staking.programId": "GmcUzAzSmqtsJAghx4u1BSBRpr9FsLTSWAsCak9KbUKG",
+    "token": "7RR3z4ofFSjmJiqgnhgJSsfhXgbF95phLfggs3D95cxq"
   },
   "idl":
 
