@@ -15,7 +15,7 @@ import '../../pool.less'
 import LoadingOverlay from '../../components/data/LoadingOverlay'
 import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
 import LoadingSpinner from '../../components/data/LoadingSpinner'
-import { formatUSD } from '../../utils/utils'
+import { formatUSD, formatNumber } from '../../utils/utils'
 import StakingClient from '../../solana/StakingClient'
 
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
@@ -341,11 +341,11 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                 </Col>
                 <Col sm={5} xs={24} md={5} className="total-container">
                   <div className="text">Total Stake</div>
-                  <div className="number">{totalStakedRiant}</div>
+                  <div className="number">{formatNumber.format(totalStakedRiant)}</div>
                 </Col>
                 <Col sm={5} xs={24} md={5} className="staked-container">
                   <div className="text">Staked</div>
-                  <div className="number">{riantStaked}</div>
+                  <div className="number">{formatNumber.format(riantStaked)}</div>
                 </Col>
 
                 <Col sm={4} xs={24} md={4} className="detail-button">
@@ -387,7 +387,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                   </Col>
                   <Col className="staked-container" span={4}>
                     <div className="text">PENDING REWARD</div>
-                    <div className="number">{pendingReward}</div>
+                    <div className="number">{formatNumber.format(pendingReward)}</div>
                   </Col>
                   <Col className="withdraw-deposit-container" sm={11} xs={24}>
                     <div>{options}</div>
