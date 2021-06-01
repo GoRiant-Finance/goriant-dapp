@@ -17,16 +17,7 @@ const Wrapper = styled('header')`
   font-family: ${props => props.theme.fonts.headings};
 `
 
-const HeaderInner = styled('div')`
-max-width: ${props => props.theme.widths.lg};
-
-@media (min-width: ${props => props.theme.breakpoints.lg}) {
-  max-width: ${props => props.theme.widths.lg};
-}
-
-@media (min-width: ${props => props.theme.breakpoints.xl}) {
-  max-width: ${props => props.theme.widths.xl};
-}
+const HeaderInner = styled(Container)`
   display: flex;
   flex-direction: column;
   align-items: center;
