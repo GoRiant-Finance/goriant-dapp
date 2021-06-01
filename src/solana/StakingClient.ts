@@ -50,7 +50,7 @@ function calculatePendingReward(totalStaked: BN, state: any, memberStaked: BN, m
     return 0
   }
 
-  const multiplier = Utils.getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock) as BN
+  const multiplier = new BN (Utils.getMultiplier(new BN(lastRewardBlock), new BN(time), bonusEndBlock))
   const tokenReward = multiplier.mul(rewardPerBlock)
   const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaked))
   const pendingReward = memberStaked
@@ -125,7 +125,9 @@ export default class StakingClient {
     return true
   }
 
-  public static async deposit(connection: Connection, wallet: Wallet, amount: number) {
+  public static async deposit(connection: Connection, wallet: Wallet, amount: number, setRiantProcessing : any) {
+    setRiantProcessing(true);
+
     loadProgram(connection, wallet)
 
     const owner = provider.wallet.publicKey
@@ -159,6 +161,7 @@ export default class StakingClient {
         }
       })
       console.log('tx: ', tx)
+      setRiantProcessing(false);
       notify({
         message: 'Deposit Amount',
         description: 'Deposit Amount successful '
@@ -167,12 +170,15 @@ export default class StakingClient {
       console.log('Stake Error: ', e)
       notify({
         message: 'Deposit Amount',
-        description: 'Deposit Amount fail '
+        description: 'Deposit Amount fail  '
       })
+      setRiantProcessing(false);
+
     }
   }
 
-  public static async withdraw(connection: Connection, wallet: Wallet) {
+  public static async withdraw(connection: Connection, wallet: Wallet,amount: number, setRiantProcessing : any) {
+    setRiantProcessing(true);
     loadProgram(connection, wallet)
 
     const tokenAccount = new web3.PublicKey(config.program.vault)
@@ -188,7 +194,7 @@ export default class StakingClient {
       program.programId
     )
 
-    const withdrawAmount = new BN(99)
+    const withdrawAmount = new BN(amount)
     try {
       const tx = await program.rpc.withdraw(withdrawAmount, {
         accounts: {
@@ -231,7 +237,18 @@ export default class StakingClient {
         ' - amount: ',
         await Utils.tokenBalance(connection, memberBalances.vaultPw)
       )
+      notify({
+        message: 'Withdraw Amount',
+        description: 'Withdraw Amount successful '
+      })
+      setRiantProcessing(false);
+
     } catch (e) {
+      setRiantProcessing(false);
+      notify({
+        message: 'Withdraw Amount',
+        description: 'Withdraw Amount fail '
+      })
       console.log('Stake Error: ', e)
     }
   }
@@ -276,7 +293,7 @@ export default class StakingClient {
     let totalStaking = new BN(tokenSupplyOfPoolMint.value.amount)
     if (totalStaking.eq(new BN('0'))) totalStaking = new BN(1)
 
-    const multiplier = Utils.getMultiplier(new BN(lastRewardBlock), new BN(currentTimestamp), bonusEndBlock) as BN
+    const multiplier = new BN(Utils.getMultiplier(new BN(lastRewardBlock), new BN(currentTimestamp), bonusEndBlock))
     const tokenReward = multiplier.mul(rewardPerBlock)
     const newAccTokenPerShare = accTokenPerShare.add(tokenReward.mul(precisionFactor).div(totalStaking))
     const pendingReward = stakingToken
@@ -288,6 +305,7 @@ export default class StakingClient {
   }
 
   public static async getMemberRiantBalances(connection: Connection, wallet: Wallet) {
+    console.log("Ko ra ne")
     loadProgram(connection, wallet)
     const currentBlock = Math.floor(Date.now().valueOf() / 1000)
     const state = (await program.state()) as any
@@ -296,6 +314,7 @@ export default class StakingClient {
     const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
     return {
+
       stakedAmount: memberStaked.toNumber() / 1_000_000_000,
       pendingRewardAmount: pendingRewardAmount / 1_000_000_000
     }
