@@ -56,7 +56,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       setLoading(false)
     }, 2000)
     fetchMyAPI()
-  }, [wallet, connected, isUserRiant])
+  }, [wallet, connected, isUserRiant, riantProcessing])
 
   const dark1 = '#28293D'
 
