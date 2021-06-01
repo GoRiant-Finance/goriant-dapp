@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '../../utils/styled'
-import {shortenAddress} from "../../utils/utils";
+import {shortenAddress, formatNumber} from "../../utils/utils";
 import StakingClient from "../../solana/StakingClient";
 
 
@@ -41,8 +41,8 @@ export class CurrentUserBadge extends React.Component<any, any> {
     }
     console.log("Current wallet balance : ", this.state.balance)
     return (
-      <span style={{fontSize: 19}}>
-        {shortenAddress(`${this.state.wallet.publicKey}`)} Balance: {this.state.balance} SOL
+      <span style={{fontSize: 16}}>
+      {formatNumber.format(this.state.balance)}SOL  {shortenAddress(`${this.state.wallet.publicKey}`)}
       </span>
     );
   }

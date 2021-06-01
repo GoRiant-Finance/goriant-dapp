@@ -204,7 +204,7 @@ export const isSmallNumber = (val: number) => {
 export const formatNumber = {
   format: (val?: number, useSmall?: boolean) => {
     if (!val) {
-      return "--";
+      return "0";
     }
     if (useSmall && isSmallNumber(val)) {
       return 0.001;
