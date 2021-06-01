@@ -1,12 +1,11 @@
-import { Card, Row, Col, Input } from 'antd'
-import React, { useState, useEffect } from 'react'
+import { Card, Col, Input, Row } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useWallet } from '../../contexts/wallet'
 import { useConnection } from '../../contexts/connection'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 
 import Page from '../../components/layout/Page'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Container from '../../components/layout/Container'
 import styled from '../../utils/styled'
@@ -18,7 +17,6 @@ import LoadingOverlayInner from '../../components/data/LoadingOverlayInner'
 import LoadingSpinner from '../../components/data/LoadingSpinner'
 import { formatUSD } from '../../utils/utils'
 import StakingClient from '../../solana/StakingClient'
-import { ArrowsAltOutlined } from '@ant-design/icons'
 
 export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => {
   const { wallet, connected, isUserRiant, setUserRiant, select } = useWallet()
@@ -100,8 +98,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     if (riantPick === 'deposit') {
       await StakingClient.deposit(connection, wallet as any, riantNumber as any, setRiantProcessing)
       setRiantNumber('0')
-    }
-    else if (riantPick === 'withdraw') {
+    } else if (riantPick === 'withdraw') {
       await StakingClient.withdraw(connection, wallet as any, riantNumber as any, setRiantProcessing as any)
       setRiantNumber('0')
     }
@@ -405,7 +402,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                               type="number"
                               value={riantNumber}
                               onChange={handleRianNumberChange}
-                            ></Input>
+                            />
                           </Col>
                           <Col className="text" sm={3} xs={6}>
                             <span>RIANT</span>
