@@ -74,6 +74,8 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
 
   const handleRianNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const data = event.target.value
+    setRiantNumber(data)
+
   }
 
   const options = coinTypes.map((loan, key) => {
