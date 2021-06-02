@@ -1,9 +1,11 @@
 {
   "program": {
-    "staking.programId": "GmcUzAzSmqtsJAghx4u1BSBRpr9FsLTSWAsCak9KbUKG",
-    "token": "7RR3z4ofFSjmJiqgnhgJSsfhXgbF95phLfggs3D95cxq"
+    "staking.programId": "HBG7xUHh2gH3PrLMDeXewxZ4hiVgoCXe6NEuUbseGzKa",
+    "ico.programId": "Cw4dVrCMR7B8r2CJMQJS1Vbzy683mfxy2e6bWKEbrCHh",
+    "token": "Et7Vv9LVG76CEecrqxFR6KjM3RpyZPmxMndga1CKDtay"
   },
-  "idl":
+
+  "staking-idl":
 
   {
     "version": "0.0.0",
@@ -558,6 +560,177 @@
     "metadata": {
       "address": "6C4QRFn4u1yjVn4HH4EiHgXS4EAsKtCE4xAouxroZhfi"
     }
-  }
+  },
 
+
+  "ico-idl":
+
+  {
+    "version": "0.0.0",
+    "name": "ico",
+    "instructions": [
+      {
+        "name": "buy",
+        "accounts": [
+          {
+            "name": "icoContract",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "icoImprint",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "icoPool",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "beneficiary",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "buyerSolWallet",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "buyerTokenWallet",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "tokenProgram",
+            "isMut": false,
+            "isSigner": false
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    ],
+    "state": {
+      "struct": {
+        "name": "RiantICO",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "key",
+              "type": "publicKey"
+            },
+            {
+              "name": "initialized",
+              "type": "bool"
+            },
+            {
+              "name": "imprint",
+              "type": "publicKey"
+            },
+            {
+              "name": "nonce",
+              "type": "u8"
+            },
+            {
+              "name": "start",
+              "type": "i64"
+            },
+            {
+              "name": "cap",
+              "type": "u16"
+            },
+            {
+              "name": "raisedAmount",
+              "type": "u16"
+            },
+            {
+              "name": "rate",
+              "type": "u16"
+            },
+            {
+              "name": "owner",
+              "type": "publicKey"
+            },
+            {
+              "name": "beneficiary",
+              "type": "publicKey"
+            },
+            {
+              "name": "icoPool",
+              "type": "publicKey"
+            }
+          ]
+        }
+      },
+      "methods": [
+        {
+          "name": "new",
+          "accounts": [
+            {
+              "name": "authority",
+              "isMut": false,
+              "isSigner": true
+            },
+            {
+              "name": "depositor",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "icoPool",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "tokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "rent",
+              "isMut": false,
+              "isSigner": false
+            }
+          ],
+          "args": [
+            {
+              "name": "statePubKey",
+              "type": "publicKey"
+            },
+            {
+              "name": "nonce",
+              "type": "u8"
+            },
+            {
+              "name": "start",
+              "type": "i64"
+            },
+            {
+              "name": "cap",
+              "type": "u16"
+            },
+            {
+              "name": "rate",
+              "type": "u16"
+            }
+          ]
+        }
+      ]
+    },
+    "metadata": {
+      "address": "Cw4dVrCMR7B8r2CJMQJS1Vbzy683mfxy2e6bWKEbrCHh"
+    }
+  }
 }

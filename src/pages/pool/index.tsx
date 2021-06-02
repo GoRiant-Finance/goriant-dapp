@@ -57,7 +57,6 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
         setRiantStaked(0)
         setPendingReward(0)
       }
-
     }
     setInterval(() => {
       setLoading(false)
@@ -81,15 +80,13 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     const isCurrent = riantPick === loan
     return (
       <span>
-      <span key={key} className="radioPad">
-        <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
-          <input className="text" type="radio" name="riantTypes" id={loan} value={loan} onChange={handlePickRadio} />
-          {loan}
-        </label>
-      </span>
-      <label className={'text text-gradient-4'}>
-      {key < coinTypes.length - 1 ? "|" : ""}
-      </label>
+        <span key={key} className="radioPad">
+          <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
+            <input className="text" type="radio" name="riantTypes" id={loan} value={loan} onChange={handlePickRadio} />
+            {loan}
+          </label>
+        </span>
+        <label className="text text-gradient-4">{key < coinTypes.length - 1 ? '|' : ''}</label>
       </span>
     )
   })
@@ -117,6 +114,10 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   }
   const createMember = async () => {
     await StakingClient.createMember(connection, wallet as any, setUserRiant)
+  }
+
+  const airdrop = async () => {
+    await StakingClient.buyRiant(connection, wallet as any)
   }
 
   const CardTitle = styled('p')`
@@ -325,9 +326,18 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                     </div>
                   </CardDashed>
                 </Col>
-                <Col xs={24} sm={8}>
-                  <div className="button">Harvest all (2)</div>
-                </Col>
+
+                {connected ? (
+                  <Col xs={24} sm={8}>
+                    <div className="button" onClick={() => airdrop()}>
+                      Airdrop RIANT
+                    </div>
+                  </Col>
+                ) : (
+                  <Col xs={24} sm={8}>
+                    <div className="button">Please login to get your Airdrop</div>
+                  </Col>
+                )}
               </Row>{' '}
             </Card>{' '}
           </Col>
