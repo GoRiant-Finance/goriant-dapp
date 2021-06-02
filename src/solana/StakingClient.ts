@@ -78,7 +78,8 @@ export default class StakingClient {
     return 0
   }
 
-  public static async buyRiant(connection: Connection, wallet: Wallet) {
+  public static async buyRiant(connection: Connection, wallet: Wallet, setAirDropProcessing: any) {
+    setAirDropProcessing(true)
     loadPrograms(connection, wallet)
 
     const { key, beneficiary, icoPool, imprint } = await icoProgram.state()
@@ -99,9 +100,19 @@ export default class StakingClient {
           systemProgram: web3.SystemProgram.programId
         }
       })
+      setAirDropProcessing(false)
+      notify({
+        message: 'Airdrop',
+        description: 'Airdrop successful '
+      })
       console.log('tx: ', tx)
     } catch (e) {
       console.log('Purchase RIANT error due to: ', e)
+      notify({
+        message: 'Airdrop',
+        description: 'Airdrop fail   '
+      })
+      setAirDropProcessing(false)
     }
   }
 

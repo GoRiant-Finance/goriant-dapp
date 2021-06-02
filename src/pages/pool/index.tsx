@@ -34,6 +34,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [pendingReward, setPendingReward] = useState(0)
   const [riantNumber, setRiantNumber] = useState('')
   const [riantProcessing, setRiantProcessing] = useState(false)
+  const [airDropProcessing, setAirDropProcessing] = useState(false)
 
   useEffect(() => {
     async function fetchMyAPI() {
@@ -62,7 +63,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       setLoading(false)
     }, 2000)
     fetchMyAPI()
-  }, [wallet, connected, isUserRiant, riantProcessing])
+  }, [wallet, connected, isUserRiant, riantProcessing, airDropProcessing])
 
   const dark1 = '#28293D'
 
@@ -73,7 +74,6 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
 
   const handleRianNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const data = event.target.value
-    setRiantNumber(data)
   }
 
   const options = coinTypes.map((loan, key) => {
@@ -117,7 +117,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   }
 
   const airdrop = async () => {
-    await StakingClient.buyRiant(connection, wallet as any)
+    await StakingClient.buyRiant(connection, wallet as any, setAirDropProcessing)
   }
 
   const CardTitle = styled('p')`
@@ -330,12 +330,14 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                 {connected ? (
                   <Col xs={24} sm={8}>
                     <div className="button" onClick={() => airdrop()}>
+                    {airDropProcessing && <FontAwesomeIcon className="icon-button" icon={faCircleNotch} size="lg" spin />}
+
                       Airdrop RIANT
                     </div>
                   </Col>
                 ) : (
                   <Col xs={24} sm={8}>
-                    <div className="button">Please login to get your Airdrop</div>
+                    <div className="button">Airdrop</div>
                   </Col>
                 )}
               </Row>{' '}
