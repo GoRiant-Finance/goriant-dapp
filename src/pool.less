@@ -28,7 +28,7 @@
   margin-right: 5px;
 }
 
-.farmsPanel .button {
+.farmsPanel button {
   position: absolute;
   bottom: 0;
   background: linear-gradient(to bottom right, #00cfde, #05a660) border-box;
@@ -37,8 +37,15 @@
   font-weight: bold;
   border-radius: 0.5em;
   cursor: pointer;
+  border-style: unset;
+  box-sizing: unset;
+  cursor: pointer;
 }
 
+.farmsPanel button:disabled {
+  background: #555770;
+  color: #8F90A6;
+}
 .compounding-container .logo-container {
   font-weight: 700;
   font-size: 20px;
@@ -259,7 +266,7 @@
   position: relative;
 }
 
-.withdraw-deposit-container .stake-amount .number-container .max-button .button {
+.withdraw-deposit-container .stake-amount .number-container .max-button button {
   background: #555770;
   font-weight: 500;
   font-size: 10px;
@@ -273,6 +280,9 @@
   border-radius: 2em;
   top: 20%;
   right: 0;
+  cursor: pointer;
+  border-style: unset;
+  box-sizing: unset;
   cursor: pointer;
 }
 
@@ -405,7 +415,7 @@
   .farmsContainer {
     margin-top: 10px;
   }
-  .farmsPanel .button {
+  .farmsPanel button {
     bottom: unset;
     margin-top: 10px;
     position: unset;
