@@ -35,6 +35,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [pendingReward, setPendingReward] = useState(0)
   const [riantNumber, setRiantNumber] = useState('')
   const [riantProcessing, setRiantProcessing] = useState(false)
+  const [airDropProcessing, setAirDropProcessing] = useState(false)
 
   useEffect(() => {
     async function fetchMyAPI() {
@@ -59,13 +60,12 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
         setRiantStaked(0)
         setPendingReward(0)
       }
-
     }
     setInterval(() => {
       setLoading(false)
     }, 2000)
     fetchMyAPI()
-  }, [wallet, connected, isUserRiant, riantProcessing])
+  }, [wallet, connected, isUserRiant, riantProcessing, airDropProcessing])
 
   const dark1 = '#28293D'
 
@@ -77,21 +77,20 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const handleRianNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const data = event.target.value
     setRiantNumber(data)
+
   }
 
   const options = coinTypes.map((loan, key) => {
     const isCurrent = riantPick === loan
     return (
       <span>
-      <span key={key} className="radioPad">
-        <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
-          <input className="text" type="radio" name="riantTypes" id={loan} value={loan} onChange={handlePickRadio} />
-          {loan}
-        </label>
-      </span>
-      <label className={'text text-gradient-4'}>
-      {key < coinTypes.length - 1 ? "|" : ""}
-      </label>
+        <span key={key} className="radioPad">
+          <label className={isCurrent ? 'text text-gradient-4' : 'text'}>
+            <input className="text" type="radio" name="riantTypes" id={loan} value={loan} onChange={handlePickRadio} />
+            {loan}
+          </label>
+        </span>
+        <label className="text text-gradient-4">{key < coinTypes.length - 1 ? '|' : ''}</label>
       </span>
     )
   })
@@ -117,8 +116,20 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
       setRiantNumber('0')
     }
   }
+
+  const handleMaxRiant = () => {
+    if (riantPick === 'deposit') {
+      setRiantNumber(riantBalance.toString())
+    } else if (riantPick === 'withdraw') {
+      setRiantNumber(riantStaked.toString())
+    }
+  }
   const createMember = async () => {
     await StakingClient.createMember(connection, wallet as any, setUserRiant)
+  }
+
+  const airdrop = async () => {
+    await StakingClient.buyRiant(connection, wallet as any, setAirDropProcessing)
   }
 
   const CardTitle = styled('p')`
@@ -327,9 +338,15 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                     </div>
                   </CardDashed>
                 </Col>
-                <Col xs={24} sm={8}>
-                  <div className="button">Harvest all (2)</div>
-                </Col>
+
+                  <Col xs={24} sm={8}>
+                    <button disabled={airDropProcessing || !connected} className="button" onClick={() => airdrop()}>
+                    {airDropProcessing && <FontAwesomeIcon className="icon-button" icon={faCircleNotch} size="lg" spin />}
+
+                      Airdrop RIANT
+                    </button>
+                  </Col>
+
               </Row>{' '}
             </Card>{' '}
           </Col>
@@ -421,12 +438,12 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                             <span>RIANT</span>
                           </Col>
                           <Col className="max-button" span={3}>
-                            <div className="button">MAX</div>
+                            <button onClick={handleMaxRiant}>MAX</button>
                           </Col>
                         </Row>
                       </Col>
                       <Col className="deposit-button-container" sm={6} xs={24}>
-                        <button disabled={riantProcessing || riantNumber == ''} onClick={() => actionRiant()} className="deposit-button">
+                        <button disabled={riantProcessing || riantNumber == '' || riantNumber == '0'} onClick={() => actionRiant()} className="deposit-button">
                           {riantProcessing && <FontAwesomeIcon className="icon-button" icon={faCircleNotch} size="lg" spin />}
                           {riantPick}
                         </button>

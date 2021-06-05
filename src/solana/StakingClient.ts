@@ -6,23 +6,33 @@ import { Program, Provider, setProvider, web3 } from '@project-serum/anchor'
 import BN from 'bn.js'
 import { TokenInstructions } from '@project-serum/serum'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
-import config from './staking-config.json'
+import config from './solana-config.json'
 import Utils from './utils'
 
 import { StakingPoolInfo } from '../models/stakingPool'
 import { notify } from '../utils/notifications'
 
 const STAKING_PROGRAM_ID = config.program['staking.programId']
+const ICO_PROGRAM_ID = config.program['ico.programId']
+const RIANT_TOKEN = config.program.token
 
 let provider: Provider
-let program: Program
+let stakingProgram: Program
+let icoProgram: Program
+let poolMintPubKey: PublicKey
+let owner: PublicKey
 
-function loadProgram(connection: Connection, wallet: Wallet) {
+function loadPrograms(connection: Connection, wallet: Wallet) {
   provider = new Provider(connection, wallet, Provider.defaultOptions())
   setProvider(provider)
 
-  const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
-  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
+  owner = provider.wallet.publicKey
+
+  const stakingProgramId = new web3.PublicKey(STAKING_PROGRAM_ID)
+  stakingProgram = new Program(JSON.parse(JSON.stringify(config['staking-idl'])), stakingProgramId)
+
+  const icoProgramId = new web3.PublicKey(ICO_PROGRAM_ID)
+  icoProgram = new Program(JSON.parse(JSON.stringify(config['ico-idl'])), icoProgramId)
 }
 
 function loadProgramWithOutWallet(connection: Connection) {
@@ -39,7 +49,7 @@ function loadProgramWithOutWallet(connection: Connection) {
   setProvider(dummyProvider)
 
   const programId = new web3.PublicKey(STAKING_PROGRAM_ID)
-  program = new Program(JSON.parse(JSON.stringify(config.idl)), programId)
+  stakingProgram = new Program(JSON.parse(JSON.stringify(config['staking-idl'])), programId)
   return dummyProvider
 }
 
@@ -68,23 +78,59 @@ export default class StakingClient {
     return 0
   }
 
-  public static async createMember(connection: Connection, wallet: Wallet, setUserRiant: any) {
-    loadProgram(connection, wallet)
+  public static async buyRiant(connection: Connection, wallet: Wallet, setAirDropProcessing: any) {
+    setAirDropProcessing(true)
+    loadPrograms(connection, wallet)
 
-    const state = (await program.state()) as any
-    const stateFunction = program.state as any
+    const { key, beneficiary, icoPool, imprint } = await icoProgram.state()
+    const mint = new web3.PublicKey(RIANT_TOKEN)
+    const buyerRiantWallet = await Utils.getOrCreateAssociatedAccountInfo(provider, mint, owner)
+    try {
+      const tx = await icoProgram.rpc.buy(new BN(100 * LAMPORTS_PER_SOL), {
+        accounts: {
+          icoContract: key,
+          icoImprint: imprint,
+          icoPool,
+          beneficiary,
+          buyerSolWallet: owner,
+          buyerAuthority: owner,
+          buyerTokenWallet: buyerRiantWallet,
+          tokenProgram: TokenInstructions.TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId
+        }
+      })
+      setAirDropProcessing(false)
+      notify({
+        message: 'Airdrop',
+        description: 'Airdrop successful '
+      })
+    } catch (e) {
+      console.log('Purchase RIANT error due to: ', e)
+      notify({
+        message: 'Airdrop',
+        description: 'Airdrop fail   '
+      })
+      setAirDropProcessing(false)
+    }
+  }
+
+  public static async createMember(connection: Connection, wallet: Wallet, setUserRiant: any) {
+    loadPrograms(connection, wallet)
+
+    const state = (await stakingProgram.state()) as any
+    const stateFunction = stakingProgram.state as any
     const statePubKey = await stateFunction.address()
-    const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
+    const member = await stakingProgram.account.member.associatedAddress(provider.wallet.publicKey)
 
     const [memberImprint, memberNonce] = await web3.PublicKey.findProgramAddress(
       [statePubKey.toBuffer(), member.toBuffer()],
-      program.programId
+      stakingProgram.programId
     )
 
     const { tx, balances } = await Utils.createBalanceSandbox(provider, state, memberImprint)
 
     try {
-      const createMemberTx = await program.rpc.createMember(memberNonce, {
+      const createMemberTx = await stakingProgram.rpc.createMember(memberNonce, {
         accounts: {
           stakingPool: statePubKey,
           member,
@@ -113,9 +159,9 @@ export default class StakingClient {
   }
 
   public static async checkMemberExist(connection: Connection, wallet: Wallet) {
-    loadProgram(connection, wallet)
+    loadPrograms(connection, wallet)
     try {
-      const memberAssociatedAccount = await program.account.member.associated(wallet.publicKey)
+      const memberAssociatedAccount = await stakingProgram.account.member.associated(wallet.publicKey)
       if (memberAssociatedAccount == null || typeof memberAssociatedAccount === 'undefined') {
         return false
       }
@@ -128,28 +174,29 @@ export default class StakingClient {
   public static async deposit(connection: Connection, wallet: Wallet, amount: number, setRiantProcessing: any) {
     setRiantProcessing(true)
 
-    loadProgram(connection, wallet)
-
-    const owner = provider.wallet.publicKey
+    loadPrograms(connection, wallet)
 
     const god = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TokenInstructions.TOKEN_PROGRAM_ID,
-      new web3.PublicKey(config.program.token),
+      new web3.PublicKey(RIANT_TOKEN),
       owner
     )
 
-    const state = (await program.state()) as any
-    const stateFunction = program.state as any
+    const state = (await stakingProgram.state()) as any
+    const stateFunction = stakingProgram.state as any
     const statePubKey = await stateFunction.address()
 
-    const member = await program.account.member.associatedAddress(owner)
-    const memberAccount = await program.account.member.associated(owner)
+    const member = await stakingProgram.account.member.associatedAddress(owner)
+    const memberAccount = await stakingProgram.account.member.associated(owner)
     const { balances } = memberAccount
-    const [memberImprint, _nonce] = await web3.PublicKey.findProgramAddress([statePubKey.toBuffer(), member.toBuffer()], program.programId)
+    const [memberImprint, _nonce] = await web3.PublicKey.findProgramAddress(
+      [statePubKey.toBuffer(), member.toBuffer()],
+      stakingProgram.programId
+    )
     const depositAmount = new BN(amount * LAMPORTS_PER_SOL)
     try {
-      const tx = await program.rpc.deposit(depositAmount, {
+      const tx = await stakingProgram.rpc.deposit(depositAmount, {
         accounts: {
           stakingPool: statePubKey,
           poolMint: state.poolMint,
@@ -167,7 +214,6 @@ export default class StakingClient {
           systemProgram: web3.SystemProgram.programId
         }
       })
-      console.log('tx: ', tx)
       setRiantProcessing(false)
       notify({
         message: 'Deposit Amount',
@@ -185,30 +231,29 @@ export default class StakingClient {
 
   public static async withdraw(connection: Connection, wallet: Wallet, amount: number, setRiantProcessing: any) {
     setRiantProcessing(true)
-    loadProgram(connection, wallet)
+    loadPrograms(connection, wallet)
 
-    const owner = provider.wallet.publicKey
     const tokenAccount = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TokenInstructions.TOKEN_PROGRAM_ID,
-      new web3.PublicKey(config.program.token),
+      new web3.PublicKey(RIANT_TOKEN),
       owner
     )
-    const state = (await program.state()) as any
-    const stateFunction = program.state as any
+    const state = (await stakingProgram.state()) as any
+    const stateFunction = stakingProgram.state as any
     const statePubKey = await stateFunction.address()
 
-    const member = await program.account.member.associatedAddress(provider.wallet.publicKey)
-    const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
+    const member = await stakingProgram.account.member.associatedAddress(provider.wallet.publicKey)
+    const memberAccount = await stakingProgram.account.member.associated(provider.wallet.publicKey)
     const { balances } = memberAccount
     const [memberImprint, memberNonce] = await web3.PublicKey.findProgramAddress(
       [statePubKey.toBuffer(), member.toBuffer()],
-      program.programId
+      stakingProgram.programId
     )
 
     const withdrawAmount = new BN(amount * LAMPORTS_PER_SOL)
     try {
-      const tx = await program.rpc.withdraw(withdrawAmount, {
+      const tx = await stakingProgram.rpc.withdraw(withdrawAmount, {
         accounts: {
           stakingPool: statePubKey,
           poolMint: state.poolMint,
@@ -225,29 +270,6 @@ export default class StakingClient {
           rent: web3.SYSVAR_RENT_PUBKEY
         }
       })
-      console.log('tx: ', tx)
-      console.log('token account: ', tokenAccount.toString(), ' - amount: ', await Utils.tokenBalance(connection, tokenAccount))
-
-      console.log('memberAccount.owner: ', memberAccount.authority.toString())
-      console.log('memberAccount.metadata: ', memberAccount.metadata.toString())
-      console.log('memberAccount.nonce: ', memberAccount.nonce.toString())
-
-      const memberBalances = memberAccount.balances
-
-      console.log('memberAccount.balances')
-      console.log('spt: ', memberBalances.spt.toString(), ' - amount: ', await Utils.tokenBalance(connection, memberBalances.spt))
-      console.log(
-        'vaultStake: ',
-        memberBalances.vaultStake.toString(),
-        ' - amount: ',
-        await Utils.tokenBalance(connection, memberBalances.vaultStake)
-      )
-      console.log(
-        'vaultPw: ',
-        memberBalances.vaultPw.toString(),
-        ' - amount: ',
-        await Utils.tokenBalance(connection, memberBalances.vaultPw)
-      )
       notify({
         message: 'Withdraw Amount',
         description: 'Withdraw Amount successful '
@@ -268,13 +290,14 @@ export default class StakingClient {
     if (wallet == null || typeof wallet === 'undefined') {
       dynamicProvider = loadProgramWithOutWallet(connection)
     } else {
-      loadProgram(connection, wallet)
+      loadPrograms(connection, wallet)
       dynamicProvider = provider
     }
 
-
-    const state = (await program.state()) as any
-    const poolMintPubKey = state.poolMint
+    const state = (await stakingProgram.state()) as any
+    if (poolMintPubKey == null) {
+      poolMintPubKey = state.poolMint
+    }
     const poolMint = await dynamicProvider.connection.getTokenSupply(poolMintPubKey)
     const totalStaked = poolMint.value
     const totalReward = state.rewardPerBlock * (state.bonusEndBlock - state.startBlock)
@@ -292,12 +315,12 @@ export default class StakingClient {
   }
 
   public static async pendingReward(connection: Connection, wallet: Wallet) {
-    loadProgram(connection, wallet)
+    loadPrograms(connection, wallet)
 
     const currentTimestamp = Math.floor(Date.now().valueOf() / 1000)
-    const state = (await program.state()) as any
+    const state = (await stakingProgram.state()) as any
     const { precisionFactor, lastRewardBlock, rewardPerBlock, poolMint, accTokenPerShare, bonusEndBlock } = state
-    const account = await program.account.member.associated(provider.wallet.publicKey)
+    const account = await stakingProgram.account.member.associated(provider.wallet.publicKey)
 
     const tokenSupplyOfPoolMint = await provider.connection.getTokenSupply(poolMint)
     const memberTokenBalance = await provider.connection.getTokenAccountBalance(account.balances.vaultStake)
@@ -318,18 +341,15 @@ export default class StakingClient {
   }
 
   public static async getMemberRiantBalances(connection: Connection, wallet: Wallet) {
-    console.log('Ko ra ne')
-    loadProgram(connection, wallet)
-    const owner = provider.wallet.publicKey
+    loadPrograms(connection, wallet)
     const currentBlock = Math.floor(Date.now().valueOf() / 1000)
-    const state = (await program.state()) as any
-    const memberAccount = await program.account.member.associated(provider.wallet.publicKey)
+    const state = (await stakingProgram.state()) as any
+    const memberAccount = await stakingProgram.account.member.associated(provider.wallet.publicKey)
     const totalStaked = new BN((await provider.connection.getTokenSupply(state.poolMint)).value.amount)
     const memberStaked = new BN((await provider.connection.getTokenAccountBalance(memberAccount.balances.vaultStake)).value.amount)
     const pendingRewardAmount = calculatePendingReward(totalStaked, state, memberStaked, memberAccount.rewardDebt, currentBlock)
 
-    const riantWallet = await Utils.getOrCreateAssociatedAccountInfo(provider, new web3.PublicKey(config.program.token), owner)
-    console.log('riantWallet: ', riantWallet)
+    const riantWallet = await Utils.getOrCreateAssociatedAccountInfo(provider, new web3.PublicKey(RIANT_TOKEN), owner)
     let riantBalance = new BN(0)
     if (riantWallet) riantBalance = new BN((await provider.connection.getTokenAccountBalance(riantWallet)).value.amount)
 
