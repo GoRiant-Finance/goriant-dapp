@@ -28,6 +28,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
   const [coinTypes] = useState(['withdraw', 'deposit'])
   const [riantPick, setRiantPick] = useState('deposit')
   const [totalStakedRiant, setTotalStakedRiant] = useState(0)
+  const [apr, setApr] = useState(0)
   const [balanceSol] = useState(0)
   const [riantStaked, setRiantStaked] = useState(0)
   const [riantBalance, setRiantBalance] = useState(0)
@@ -40,6 +41,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     async function fetchMyAPI() {
       const info = await StakingClient.getStakingPoolInfo(connection, wallet as any)
       setTotalStakedRiant(info.totalStaked)
+      setApr(info.apr)
       if (wallet && wallet.publicKey) {
         const isExist = await StakingClient.checkMemberExist(connection, wallet as any)
         setUserRiant(isExist as boolean)
@@ -365,7 +367,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
                   <span className="text-yellow-1">RIANT</span>
                 </Col>
                 <Col sm={8} xs={16} md={6} className="apy-container text-green-light">
-                  <div className="percent">131.63%</div>
+                  <div className="percent">{formatNumber.format(apr) + '%'}</div>
                   <div className="text">Auto-Compounding</div>
                 </Col>
                 <Col sm={5} xs={24} md={5} className="total-container">
