@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from '../../utils/styled'
-import Container from './Container'
+import { Row, Col } from 'antd';
 import { ConnectStatus } from '../connectStatus'
 import './../../ant-custom.less'
 import { Menu } from 'antd';
@@ -235,50 +235,54 @@ function Header() {
   }
 
   return (
-    <Wrapper>
-      <HeaderInner>
-        <Logo />
-        <Title>GORIANT</Title>
-        <HeaderNav>
-          <HeaderNavLink exact to="/pool" activeClassName="is-active">
-            POOL
-        </HeaderNavLink>
-          <HeaderNavLink to="/voting" activeClassName="is-active">
-            VOTING
-        </HeaderNavLink>
-        </HeaderNav>
-        <Balance>
-          <BalanceImg>
-            <Coin />
-          </BalanceImg>
-          <BalanceNum>$323.31</BalanceNum>
-        </Balance>
-        <div className="userInfo">
-          <UserId style={{ paddingRight: 30 }}>
-            <ConnectStatus />
-          </UserId>
-        </div>
-        <FaBar onClick={handleDropMenuClick}>
-          <FaBarIcon></FaBarIcon>
-          {isDropMenu && (
-            <Menu
-              mode="inline"
-              theme="dark"
-            >
-              <Menu.Item key="1">
-                <Link to="/pool"></Link>Pool
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/voting"></Link>Vote
-              </Menu.Item>
-              <Menu.Item key="3">
-                Connect Wallet
-              </Menu.Item>
-            </Menu>
-          )}
-        </FaBar>
-      </HeaderInner>
-    </Wrapper>
+    <Row>
+      <Col span={24}>
+        <Wrapper>
+          <HeaderInner style={{margin: "auto"}}>
+            <Logo />
+            <Title>GORIANT</Title>
+            <HeaderNav>
+              <HeaderNavLink exact to="/pool" activeClassName="is-active">
+                POOL
+              </HeaderNavLink>
+              <HeaderNavLink to="/voting" activeClassName="is-active">
+                VOTING
+              </HeaderNavLink>
+            </HeaderNav>
+            <Balance>
+              <BalanceImg>
+                <Coin />
+              </BalanceImg>
+              <BalanceNum>$323.31</BalanceNum>
+            </Balance>
+            <div className="userInfo">
+              <UserId style={{ paddingRight: 30 }}>
+                <ConnectStatus />
+              </UserId>
+            </div>
+            <FaBar onClick={handleDropMenuClick}>
+              <FaBarIcon></FaBarIcon>
+              {isDropMenu && (
+                <Menu
+                  mode="inline"
+                  theme="dark"
+                >
+                  <Menu.Item key="1">
+                    <Link to="/pool"></Link>Pool
+                  </Menu.Item>
+                  <Menu.Item key="2">
+                    <Link to="/voting"></Link>Vote
+                  </Menu.Item>
+                  <Menu.Item key="3">
+                    Connect Wallet
+                  </Menu.Item>
+                </Menu>
+              )}
+            </FaBar>
+          </HeaderInner>
+        </Wrapper>
+      </Col>
+    </Row>
   );
 }
 

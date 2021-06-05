@@ -1,6 +1,7 @@
 import {ButtonProps} from "antd/lib/button";
 import React from "react";
 import {useWallet} from "../../contexts/wallet";
+import './../../core.less';
 
 export interface ConnectButtonProps
   extends ButtonProps,
@@ -16,9 +17,7 @@ export const ConnectButton = (props: ConnectButtonProps) => {
 
   return (
       <div
-      onClick={select} style={{ backgroundColor: "#06C270", color: "white", display: "inline-block",
-      borderRadius: "2em", paddingTop: "10px", paddingBottom: "10px", paddingRight: "40px",
-      paddingLeft: "40px", cursor: "pointer", fontWeight: 500}}>
+      onClick={select} className="connect-button">
           Connect Wallet
       </div>
   );
