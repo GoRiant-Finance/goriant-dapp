@@ -151,6 +151,14 @@
   top: 35%;
 }
 
+.compounding-container .detail-button .connect:hover {
+  background: none;
+  background-color: #00aebc;
+  -webkit-transition: background-color 0.5s linear;
+  -ms-transition: background-color 0.5s linear;
+  transition: background-color 0.5s linear;
+}
+
 .compounding-container .detail-button .stroke-up {
   display: inline-block;
   border: 1px solid #06c270;
@@ -346,6 +354,19 @@
 .contract-info .auto .button svg {
   margin-left: 15px;
   margin-top: 3px;
+  animation: spin 3s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+} 
+
+.anticon.anticon-setting:hover {
+  animation: spin 3s linear infinite;
+}
+
+.contract-info .auto .button:hover svg {
+  animation-play-state: paused;
 }
 
 .contract-info .auto .button .text {
