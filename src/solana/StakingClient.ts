@@ -16,7 +16,6 @@ const STAKING_PROGRAM_ID = config.program['staking.programId']
 
 let provider: Provider
 let program: Program
-let poolMintPubKey: PublicKey
 
 function loadProgram(connection: Connection, wallet: Wallet) {
   provider = new Provider(connection, wallet, Provider.defaultOptions())
@@ -273,18 +272,21 @@ export default class StakingClient {
       dynamicProvider = provider
     }
 
-    if (poolMintPubKey == null) {
-      const state = (await program.state()) as any
-      poolMintPubKey = state.poolMint
-    }
+
+    const state = (await program.state()) as any
+    const poolMintPubKey = state.poolMint
     const poolMint = await dynamicProvider.connection.getTokenSupply(poolMintPubKey)
     const totalStaked = poolMint.value
+    const totalReward = state.rewardPerBlock * (state.bonusEndBlock - state.startBlock)
+    let apr
+    if (totalStaked.uiAmount == null || totalStaked.uiAmount === 0) {
+      apr = totalReward / 1
+    } else {
+      apr = totalReward / (totalStaked.uiAmount * state.precisionFactor)
+    }
     const stakingPool: StakingPoolInfo = {
       totalStaked: totalStaked.uiAmount,
-      accumulateTokenRewardPerShare: 0,
-      lastUpdateBlock: 0,
-      rewardPerBlock: 0,
-      precisionFactor: 0
+      apr: apr * 100
     }
     return stakingPool
   }
