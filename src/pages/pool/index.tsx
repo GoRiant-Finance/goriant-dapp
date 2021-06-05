@@ -64,7 +64,7 @@ export const PoolPage = (props: { left?: JSX.Element; right?: JSX.Element }) => 
     setInterval(() => {
       setLoading(false)
     }, 2000)
-    // fetchMyAPI()
+    fetchMyAPI()
   }, [wallet, connected, isUserRiant, riantProcessing, airDropProcessing])
 
   const dark1 = '#28293D'
