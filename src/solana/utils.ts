@@ -12,21 +12,18 @@ export default class Utils {
   public static async createBalanceSandbox(provider: Provider, programState: any, registrySigner: PublicKey) {
     const spt = new web3.Account()
     const vaultStake = new web3.Account()
-    const vaultPw = new web3.Account()
 
     const lamports = await provider.connection.getMinimumBalanceForRentExemption(165)
 
     const createSptIx = await createTokenAccountInstrs(provider, spt.publicKey, programState.poolMint, registrySigner, lamports)
     const createVaultStakeIx = await createTokenAccountInstrs(provider, vaultStake.publicKey, programState.mint, registrySigner, lamports)
-    const createVaultPwIx = await createTokenAccountInstrs(provider, vaultPw.publicKey, programState.mint, registrySigner, lamports)
     const tx0 = new web3.Transaction()
-    tx0.add(...createSptIx, ...createVaultStakeIx, ...createVaultPwIx)
-    const signers0 = [spt, vaultStake, vaultPw]
+    tx0.add(...createSptIx, ...createVaultStakeIx)
+    const signers0 = [spt, vaultStake]
     const tx = { tx: tx0, signers: signers0 }
     const balances = {
       spt: spt.publicKey,
-      vaultStake: vaultStake.publicKey,
-      vaultPw: vaultPw.publicKey
+      vaultStake: vaultStake.publicKey
     }
 
     const r: Result = { tx, balances }
@@ -88,6 +85,5 @@ type Result = {
   balances: {
     spt: PublicKey
     vaultStake: PublicKey
-    vaultPw: PublicKey
   }
 }
