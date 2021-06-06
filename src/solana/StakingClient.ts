@@ -84,21 +84,49 @@ export default class StakingClient {
 
     const { key, beneficiary, icoPool, imprint } = await icoProgram.state()
     const mint = new web3.PublicKey(RIANT_TOKEN)
-    const buyerRiantWallet = await Utils.getOrCreateAssociatedAccountInfo(provider, mint, owner)
+
+    const associatedAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      mint,
+      owner
+    )
+    const account = await provider.connection.getAccountInfo(associatedAddress)
+
+    const buyAccountContext = {
+      accounts: {
+        icoContract: key,
+        icoImprint: imprint,
+        icoPool,
+        beneficiary,
+        buyerSolWallet: owner,
+        buyerAuthority: owner,
+        buyerTokenWallet: associatedAddress,
+        tokenProgram: TokenInstructions.TOKEN_PROGRAM_ID,
+        systemProgram: web3.SystemProgram.programId
+      }
+    }
+    let buyContext: {}
+    if (account !== null) {
+      buyContext = { ...buyAccountContext }
+    } else {
+      buyContext = {
+        ...buyAccountContext,
+        instructions: [
+          Token.createAssociatedTokenAccountInstruction(
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TokenInstructions.TOKEN_PROGRAM_ID,
+            mint,
+            associatedAddress,
+            owner,
+            owner
+          )
+        ]
+      }
+    }
+
     try {
-      const tx = await icoProgram.rpc.buy(new BN(100 * LAMPORTS_PER_SOL), {
-        accounts: {
-          icoContract: key,
-          icoImprint: imprint,
-          icoPool,
-          beneficiary,
-          buyerSolWallet: owner,
-          buyerAuthority: owner,
-          buyerTokenWallet: buyerRiantWallet,
-          tokenProgram: TokenInstructions.TOKEN_PROGRAM_ID,
-          systemProgram: web3.SystemProgram.programId
-        }
-      })
+      const tx = await icoProgram.rpc.buy(new BN(100 * LAMPORTS_PER_SOL), buyContext)
       setAirDropProcessing(false)
       notify({
         message: 'Airdrop',
@@ -129,20 +157,44 @@ export default class StakingClient {
 
     const { tx, balances } = await Utils.createBalanceSandbox(provider, state, memberImprint)
 
+    const instructions: Array<unknown> = []
+    instructions.push(tx.tx)
+
+    const createMemberContext = {
+      accounts: {
+        stakingPool: statePubKey,
+        member,
+        authority: provider.wallet.publicKey,
+        balances,
+        memberImprint,
+        rent: web3.SYSVAR_RENT_PUBKEY,
+        systemProgram: web3.SystemProgram.programId
+      },
+      signers: tx.signers,
+      instructions
+    }
+    const associatedAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TokenInstructions.TOKEN_PROGRAM_ID,
+      new web3.PublicKey(RIANT_TOKEN),
+      owner
+    )
+    const account = await provider.connection.getAccountInfo(associatedAddress)
+    if (account === null) {
+      createMemberContext.instructions.push(
+        Token.createAssociatedTokenAccountInstruction(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TokenInstructions.TOKEN_PROGRAM_ID,
+          new web3.PublicKey(RIANT_TOKEN),
+          associatedAddress,
+          owner,
+          owner
+        )
+      )
+    }
+
     try {
-      const createMemberTx = await stakingProgram.rpc.createMember(memberNonce, {
-        accounts: {
-          stakingPool: statePubKey,
-          member,
-          authority: provider.wallet.publicKey,
-          balances,
-          memberImprint,
-          rent: web3.SYSVAR_RENT_PUBKEY,
-          systemProgram: web3.SystemProgram.programId
-        },
-        signers: tx.signers,
-        instructions: [tx.tx]
-      })
+      const createMemberTx = await stakingProgram.rpc.createMember(memberNonce, createMemberContext)
       setUserRiant(true)
       notify({
         message: 'Create User',
