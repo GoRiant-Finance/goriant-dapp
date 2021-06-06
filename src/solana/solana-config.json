@@ -1,10 +1,9 @@
 {
   "program": {
-    "staking.programId": "HBG7xUHh2gH3PrLMDeXewxZ4hiVgoCXe6NEuUbseGzKa",
-    "ico.programId": "Cw4dVrCMR7B8r2CJMQJS1Vbzy683mfxy2e6bWKEbrCHh",
-    "token": "Et7Vv9LVG76CEecrqxFR6KjM3RpyZPmxMndga1CKDtay"
+    "staking.programId": "AgrtKwgoiCtqBy8qj9xPxW5ayHa7MBtntybUhCFSSwvJ",
+    "ico.programId": "3AE6xZbkYYRXXZ714LZTFV4efQJPBHHQvAczw7i6bNLR",
+    "token": "5qWsxsHgS5ap8LHvMVP6UrsCsbf5pGTQFWECEXibe2QD"
   },
-
   "staking-idl":
 
   {
@@ -39,11 +38,6 @@
               },
               {
                 "name": "vaultStake",
-                "isMut": true,
-                "isSigner": false
-              },
-              {
-                "name": "vaultPw",
                 "isMut": true,
                 "isSigner": false
               }
@@ -115,11 +109,6 @@
               },
               {
                 "name": "vaultStake",
-                "isMut": true,
-                "isSigner": false
-              },
-              {
-                "name": "vaultPw",
                 "isMut": true,
                 "isSigner": false
               }
@@ -208,11 +197,6 @@
                 "name": "vaultStake",
                 "isMut": true,
                 "isSigner": false
-              },
-              {
-                "name": "vaultPw",
-                "isMut": true,
-                "isSigner": false
               }
             ]
           },
@@ -253,57 +237,6 @@
             "type": "u64"
           }
         ]
-      },
-      {
-        "name": "calPendingReward",
-        "accounts": [
-          {
-            "name": "stakingPool",
-            "isMut": false,
-            "isSigner": false
-          },
-          {
-            "name": "poolMint",
-            "isMut": false,
-            "isSigner": false
-          },
-          {
-            "name": "member",
-            "isMut": false,
-            "isSigner": false
-          },
-          {
-            "name": "authority",
-            "isMut": true,
-            "isSigner": true
-          },
-          {
-            "name": "balances",
-            "accounts": [
-              {
-                "name": "spt",
-                "isMut": true,
-                "isSigner": false
-              },
-              {
-                "name": "vaultStake",
-                "isMut": true,
-                "isSigner": false
-              },
-              {
-                "name": "vaultPw",
-                "isMut": true,
-                "isSigner": false
-              }
-            ]
-          },
-          {
-            "name": "clock",
-            "isMut": false,
-            "isSigner": false
-          }
-        ],
-        "args": []
       }
     ],
     "state": {
@@ -548,20 +481,15 @@
             {
               "name": "vaultStake",
               "type": "publicKey"
-            },
-            {
-              "name": "vaultPw",
-              "type": "publicKey"
             }
           ]
         }
       }
     ],
     "metadata": {
-      "address": "6C4QRFn4u1yjVn4HH4EiHgXS4EAsKtCE4xAouxroZhfi"
+      "address": "AgrtKwgoiCtqBy8qj9xPxW5ayHa7MBtntybUhCFSSwvJ"
     }
   },
-
 
   "ico-idl":
 
@@ -730,7 +658,8 @@
       ]
     },
     "metadata": {
-      "address": "Cw4dVrCMR7B8r2CJMQJS1Vbzy683mfxy2e6bWKEbrCHh"
+      "address": "3AE6xZbkYYRXXZ714LZTFV4efQJPBHHQvAczw7i6bNLR"
     }
   }
+
 }
