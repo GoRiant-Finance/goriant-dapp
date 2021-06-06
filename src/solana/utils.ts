@@ -1,6 +1,6 @@
 import { createTokenAccountInstrs } from '@project-serum/common'
 import { Provider, web3 } from '@project-serum/anchor'
-import { Connection, PublicKey, sendAndConfirmTransaction as sendAndConfirmTransaction$1, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Transaction } from '@solana/web3.js'
 import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { TokenInstructions } from '@project-serum/serum'
